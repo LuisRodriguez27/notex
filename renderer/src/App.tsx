@@ -1,34 +1,45 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Sidebar } from './components/Sidebar'
+import type { Note, Notebook } from './shared/types'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Estado para los cuadernos
+  const [notebooks, setNotebooks] = useState<Notebook[]>([
+    { id: 'default', name: 'Mi Cuaderno', createdAt: new Date().toISOString() }
+  ])
+  const [activeNotebookId, setActiveNotebookId] = useState<string>('default')
+  
+  const [notes, setNotes] = useState<Note[]>([])
+  const [activeNoteId, setActiveNoteId] = useState<string | null>(null)
+
+  const handleCreateNote = () => {
+    // Implementación pendiente
+    console.log("Crear nota")
+  }
+
+  // Filtramos las notas que pertenecen al cuaderno activo
+  const activeNotes = notes.filter(note => note.notebookId === activeNotebookId)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="flex h-screen w-screen bg-[#1e1e1e] text-white overflow-hidden">
+      <Sidebar 
+        notebooks={notebooks}
+        activeNotebookId={activeNotebookId}
+        onSelectNotebook={setActiveNotebookId}
+        onCreateNotebook={() => console.log('Crear cuaderno')}
+        notes={activeNotes}
+        activeNoteId={activeNoteId}
+        onSelectNote={setActiveNoteId}
+        onCreateNote={handleCreateNote}
+      />
+
+      <main className="flex-1 flex flex-col relative h-full">
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          {/* Placeholder temporal */}
+          Selecciona una nota
+        </div>
+      </main>
+    </div>
   )
 }
 
