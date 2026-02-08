@@ -2,16 +2,19 @@
   "name": "notex",
   "version": "1.0.0",
   "description": "",
-  "main": "electron/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "electron ./electron"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "main": "electron/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently -k --success first \"pnpm electron ./electron\" \"cd renderer && pnpm dev\"",
+    "build": "cd renderer && pnpm build"
+  },
   "packageManager": "pnpm@10.29.1",
   "devDependencies": {
-    "electron": "^40.2.1"
+    "concurrently": "^9.2.1",
+    "electron": "37.3.0",
+    "electron-builder": "^26.0.12"
   }
 }
