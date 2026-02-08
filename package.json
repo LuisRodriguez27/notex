@@ -1,0 +1,17 @@
+{
+  "name": "notex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "electron/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "electron ./electron"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.29.1",
+  "devDependencies": {
+    "electron": "^40.2.1"
+  }
+}
