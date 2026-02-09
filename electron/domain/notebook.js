@@ -1,11 +1,12 @@
 class Notebook {
-	constructor({id, name, createdAt, updatedAt, isDeleted=0, isSynced=0}) {
+	constructor({id, name, createdAt, updatedAt, isDeleted=0, isSynced=0, notebookNotes=[]}) {
 		this.id = id;
 		this.name = name;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.isDeleted = isDeleted;
 		this.isSynced = isSynced;
+		this.notebookNotes = notebookNotes;
 	}
 
 	toPlainObject() {
@@ -15,7 +16,8 @@ class Notebook {
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 			isDeleted: this.isDeleted,
-			isSynced: this.isSynced
+			isSynced: this.isSynced,
+			notebookNotes: this.notebookNotes
 		};
 	}
 };

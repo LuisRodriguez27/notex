@@ -1,7 +1,9 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const PRELOAD_PATH = path.join(__dirname, 'preload.js');
 const PACKAGED_PATH = path.join(__dirname, '../renderer/dist/index.html');
+
+const notebookService = require('./services/notebookService');
 
 function createWindow() {
 	const windowConfig = {
@@ -35,6 +37,10 @@ function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+// IPC handlers
+// Notebooks
+ipcMain.handle('notebook:getAll', async () => await notebookService.getAllNotebooks());
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()

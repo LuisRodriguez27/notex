@@ -1,5 +1,5 @@
 const path = require('path');
-const { app, dialog } = require('electron');
+const { app } = require('electron');
 const Database = require('better-sqlite3');
 const fs = require('fs');
 const { log } = require('console');
@@ -17,7 +17,7 @@ const db = new Database(dbPath);
 function getDatabasePath() {
 	// En modo desarrollo, guarda la base de datos en el directorio del proyecto
 	if (!app.isPackaged) {
-		const devPath = path.join(_Dirname, '../db/data.db');
+		const devPath = path.join(__dirname, '../db/data.db');
 		console.log('Database path (dev):', devPath);
 		return devPath;
 	}
