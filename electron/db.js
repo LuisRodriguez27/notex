@@ -2,7 +2,6 @@ const path = require('path');
 const { app } = require('electron');
 const Database = require('better-sqlite3');
 const fs = require('fs');
-const { log } = require('console');
 
 const dbPath = getDatabasePath();
 
