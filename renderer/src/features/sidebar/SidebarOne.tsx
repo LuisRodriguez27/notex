@@ -8,7 +8,7 @@ interface SidebarOneProps {
 }
 
 export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
-	const { notebooks, selectedNotebookId, setSelectedNotebookId, refreshNotebooks, setNotebooks } = useAppContext();
+	const { notebooks, selectedNotebookId, setSelectedNotebookId, refreshNotebooks } = useAppContext();
 
 	useEffect(() => {
 		refreshNotebooks();
