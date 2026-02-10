@@ -101,8 +101,20 @@ class NotebookRepository {
 			ORDER BY createdAt DESC
 		`);
 
-		return stmt.all(notebookId);
-	}	
+		const notes = stmt.all(notebookId);
+		return notes.map(note => ({
+			...note,
+			content: this._parseContent(note.content)
+		}));
+	}
+	
+	_parseContent(content) {
+		try {
+			return typeof content === 'string' ? JSON.parse(content) : content;
+		} catch (e) {
+			return {};
+		}
+	}
 
 }	
 

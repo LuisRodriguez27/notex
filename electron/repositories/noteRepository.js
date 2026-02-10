@@ -9,7 +9,10 @@ class NoteRepository {
 			ORDER BY createdAt DESC
 		`);
 		const notes = stmt.all();
-		return notes.map(note => new Note(note));
+		return notes.map(note => new Note({
+			...note,
+			content: this._parseContent(note.content)
+		}));
 	}
 
 	findById(id) {
@@ -20,7 +23,10 @@ class NoteRepository {
 
 		if (!stmt) return null;
 
-		return new Note(stmt);
+		return new Note({
+			...stmt,
+			content: this._parseContent(stmt.content)
+		});
 	}
 
 	create(noteData) {
@@ -34,7 +40,7 @@ class NoteRepository {
 				noteData.id,
 				noteData.notebookId,
 				noteData.title,
-				noteData.content,
+				this._stringifyContent(noteData.content),
 				noteData.createdAt,
 				noteData.updatedAt
 			);
@@ -54,7 +60,7 @@ class NoteRepository {
 
 		const fieldsToUpdate = {};
 		if (noteData.title !== undefined) fieldsToUpdate.title = noteData.title;
-		if (noteData.content !== undefined) fieldsToUpdate.content = noteData.content;
+		if (noteData.content !== undefined) fieldsToUpdate.content = this._stringifyContent(noteData.content);
 		if (noteData.updatedAt !== undefined) fieldsToUpdate.updatedAt = noteData.updatedAt;
 
 		const fieldEntries = Object.entries(fieldsToUpdate);
@@ -83,6 +89,24 @@ class NoteRepository {
 		`);
 		stmt.run(id);
 		return true;
+	}
+
+	_parseContent(content) {
+		try {
+			return typeof content === 'string' ? JSON.parse(content) : content;
+		} catch (e) {
+			console.error('Error parsing note content:', e);
+			return {};
+		}
+	}
+
+	_stringifyContent(content) {
+		try {
+			return typeof content === 'object' ? JSON.stringify(content) : content;
+		} catch (e) {
+			console.error('Error stringifying note content:', e);
+			return '';
+		}
 	}
 
 }
