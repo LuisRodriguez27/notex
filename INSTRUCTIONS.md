@@ -42,6 +42,41 @@ La aplicación está compuesta por tres capas principales:
 
 ---
 
+## 📂 Estructura del Proyecto (Frontend)
+
+Para mantener la escalabilidad y el orden, utilizamos una arquitectura **Features-First**:
+
+```
+renderer/src/
+├── api/                   # Comunicación con Electron
+│   ├── NotebooksApiService.ts
+│   └── NotesApiService.ts
+│
+├── components/            # UI COMPARTIDA (Componentes "tontos" y reusables)
+│   ├── ui/                # Botones, Inputs, Modales genéricos
+│   └── layout/            # Layouts principales (MainLayout, etc.)
+│
+├── context/               # ESTADO GLOBAL
+│   └── AppContext.tsx     # Contexto principal de la aplicación
+│
+├── features/              # LÓGICA DE NEGOCIO (Features principales)
+│   ├── editor/            # Todo lo relacionado con el editor de notas
+│   │   ├── components/    # Componentes específicos del editor
+│   │   ├── hooks/         # Hooks de lógica del editor (autosave, etc.)
+│   │   └── Editor.tsx     # Componente container
+│   │
+│   └── sidebar/           # Todo lo de navegación y listas
+│       ├── components/    # Listas de notas, items, buscadores
+│       ├── hooks/         # Lógica de carga y filtrado
+│       └── Sidebar.tsx    # Componente container
+│
+├── hooks/                 # HOOKS GENÉRICOS (useDebounce, useKeyboard...)
+├── utils/                 # UTILIDADES PURAS (helpers de fecha, parsers...)
+└── App.tsx                # Punto de entrada
+```
+
+---
+
 ## ✍️ Editor de texto
 
 El editor está construido con **Tiptap**, un framework de edición rich-text que utiliza una estructura de documento basada en nodos.

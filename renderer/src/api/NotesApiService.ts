@@ -1,4 +1,4 @@
-import type { Note } from "../shared/types";
+import type { Note } from "@/shared/types";
 
 export const NotesApiService = {
 getNoteById: async (id: string): Promise<Note> => {

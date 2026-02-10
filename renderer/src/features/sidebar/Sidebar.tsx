@@ -1,6 +1,6 @@
-import type { Note, Notebook } from '../shared/types'
-import { NoteList } from './NoteList'
-import { NoteBookList } from './NoteBookList'
+import type { Note, Notebook } from '@/shared/types'
+import { NoteList } from './components/NoteList'
+import { NoteBookList } from './components/NoteBookList'
 
 interface SidebarProps {
 	notebooks: Notebook[]

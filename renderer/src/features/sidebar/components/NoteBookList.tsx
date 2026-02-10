@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Notebook } from '../shared/types'
+import type { Notebook } from '@/shared/types'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface NoteBookListProps {

@@ -1,4 +1,4 @@
-import type { Notebook } from "../shared/types";
+import type { Notebook } from "@/shared/types";
 
 export const NotebooksApiService = {
 	// Notebooks

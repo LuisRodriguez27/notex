@@ -1,5 +1,12 @@
 # 🗒️ Notex Roadmap & Features
 
+## 🏗️ FASE 0 — Reestructuración y Cimientos (Frontend)
+Antes de avanzar con UI compleja, estableceremos la arquitectura correcta.
+*   **Crear estructura de carpetas:** `features/`, `components/ui`, `context/`, `hooks/`.
+*   **Mover componentes actuales:** Refactorizar Sidebar y Editor a sus nuevos directorios.
+*   **Configurar Contexto Global:** `AppContext` para manejar el estado de selección (Notebook activo, Nota activa).
+*   **Componentes Base UI:** Crear componentes atómicos reutilizables (`Button`, `Input`).
+
 ## 🧱 FASE 1 — Core local (no dependen de nada)
 *Estas son obligatorias para que tu app ya se sienta como una app de notas real.*
 

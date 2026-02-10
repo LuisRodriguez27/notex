@@ -1,4 +1,4 @@
-import type { Notebook, Note } from "../shared/types";
+import type { Notebook, Note } from "@/shared/types";
 
 
 declare global {

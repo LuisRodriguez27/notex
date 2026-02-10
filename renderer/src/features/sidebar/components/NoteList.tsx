@@ -1,4 +1,4 @@
-import type { Note } from '../shared/types'
+import type { Note } from '@/shared/types'
 
 interface NoteListProps {
   notes: Note[]
