@@ -76,9 +76,15 @@ class NoteRepository {
 	}
 
 	delete(id) {
-
-	}	
+		const stmt = db.prepare(`
+			UPDATE notes
+			SET isDeleted = 1
+			WHERE id = ?
+		`);
+		stmt.run(id);
+		return true;
+	}
 
 }
 
-module.exports = NoteRepository;
+module.exports = new NoteRepository();

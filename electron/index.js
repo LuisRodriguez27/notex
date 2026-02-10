@@ -4,6 +4,8 @@ const PRELOAD_PATH = path.join(__dirname, 'preload.js');
 const PACKAGED_PATH = path.join(__dirname, '../renderer/dist/index.html');
 
 const notebookService = require('./services/notebookService');
+const noteService = require('./services/noteService');
+
 
 function createWindow() {
 	const windowConfig = {
@@ -40,7 +42,18 @@ app.whenReady().then(createWindow)
 
 // IPC handlers
 // Notebooks
-ipcMain.handle('notebook:getAll', async () => await notebookService.getAllNotebooks());
+ipcMain.handle('notebooks:getAll', async () => await notebookService.getAllNotebooks());
+ipcMain.handle('notebooks:getById', async (_, id) => await notebookService.getNotebookById(id));
+ipcMain.handle('notebooks:create', async (_, notebookData) => await notebookService.createNotebook(notebookData));
+ipcMain.handle('notebooks:update', async (_, id, notebookData) => await notebookService.updateNotebook(id, notebookData));
+ipcMain.handle('notebooks:delete', async (_, id) => await notebookService.deleteNotebook(id));
+
+// Notes
+ipcMain.handle('notes:getById', async (_, id) => await noteService.getNoteById(id));
+ipcMain.handle('notes:create', async (_, noteData) => await noteService.createNote(noteData));
+ipcMain.handle('notes:update', async (_, id, noteData) => await noteService.updateNote(id, noteData));
+ipcMain.handle('notes:delete', async (_, id) => await noteService.deleteNote(id));
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()

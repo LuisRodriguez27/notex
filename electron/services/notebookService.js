@@ -109,6 +109,9 @@ class NotebookService {
 			if (!existingNotebook) {
 				throw new Error('Notebook not found');
 			}
+
+			await notebookRepository.delete(id);
+			return { success: true, id };
 		} catch (error) {
 			console.error(`Error deleting notebook with ID ${id}:`, error);
 			throw new Error('Failed to delete notebook');

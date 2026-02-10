@@ -112,6 +112,9 @@ class NoteService {
 			if (!existingNote) {
 				throw new Error('Note not found');
 			}
+
+			noteRepository.delete(id);
+			return { success: true, id };
 		} catch (error) {
 			console.error(`Error deleting note with ID ${id}:`, error);
 			throw new Error('Failed to delete note');

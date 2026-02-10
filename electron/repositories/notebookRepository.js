@@ -85,8 +85,14 @@ class NotebookRepository {
 	}	
 
 	delete(id) {
-
-	}	
+		const stmt = db.prepare(`
+			UPDATE notebooks
+			SET isDeleted = 1
+			WHERE id = ?
+		`);
+		stmt.run(id);
+		return true;
+	}
 
 	getNotesForNotebook(notebookId) {
 		const stmt = db.prepare(`
