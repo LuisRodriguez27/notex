@@ -1,3 +1,4 @@
+import { Extension } from "@tiptap/core"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Highlight from "@tiptap/extension-highlight"
@@ -14,6 +15,40 @@ import { useAutoSave } from "./hooks/useAutoSave"
 // Configuración de resaltado de sintaxis
 const lowlight = createLowlight(common)
 
+// Custom extension to handle Tab key
+const TabHandler = Extension.create({
+	name: 'tabHandler',
+	addKeyboardShortcuts() {
+		return {
+			Tab: () => {
+				if (this.editor.isActive('bulletList') || this.editor.isActive('orderedList')) {
+					// Try to sink the list item
+					if (this.editor.commands.sinkListItem('listItem')) {
+						return true; // Command succeeded
+					}
+					// If sinking fails (e.g. max depth or other reason), 
+					// we still want to consume the event to prevent focus change.
+					// Optionally we could insert a tab here if desired, but blocking focus change is the priority.
+					return true; 
+				}
+				
+				// For non-list content, insert tab
+				this.editor.commands.insertContent('\t');
+				return true; // Always return true to prevent default browser behavior (focus change)
+			},
+			'Shift-Tab': () => {
+				if (this.editor.isActive('bulletList') || this.editor.isActive('orderedList')) {
+					if (this.editor.commands.liftListItem('listItem')) {
+						return true;
+					}
+					return true; // Consume event even if lift fails
+				}
+				return true; // Consume event even if not in list (or implement unindent for text)
+			},
+		}
+	}
+})
+
 interface EditorProps {
 	note: Note;
 }
@@ -24,6 +59,7 @@ export default function Editor({ note }: EditorProps) {
 			StarterKit.configure({
 				codeBlock: false,
 			}),
+			TabHandler,
 			Highlight,
 			Underline,
 			Image,
