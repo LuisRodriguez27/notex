@@ -68,6 +68,10 @@ export default function Editor({ note }: EditorProps) {
 			}),
 			CodeBlockLowlight.configure({
 				lowlight,
+				HTMLAttributes: {
+					spellcheck: "false",
+					class: "code-block",
+				},
 			}),
 		],
 		content: note.content || "", // Fallback to empty string if content is undefined
