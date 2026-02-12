@@ -93,6 +93,7 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 	const Button = ({ onClick, isActive, icon: Icon, title, className = "" }: { onClick: () => void; isActive?: boolean; icon: any; title: string; className?: string }) => (
 		<button
 			onClick={onClick}
+			onMouseDown={(e) => e.preventDefault()}
 			className={`p-1.5 rounded hover:bg-[#3e3e3e] transition-colors ${isActive ? 'bg-[#3e3e3e] text-white' : 'text-[#858585]'} ${className}`}
 			title={title}
 		>
