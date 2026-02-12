@@ -15,7 +15,9 @@ import {
 	Quote,
 	Image as ImageIcon,
 	Type,
-	ALargeSmall
+	ALargeSmall,
+	Baseline,
+	Highlighter
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -25,8 +27,12 @@ interface EditorToolbarProps {
 
 export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 	const [showHeadingSelector, setShowHeadingSelector] = useState(false);
+	const [showTextColorSelector, setShowTextColorSelector] = useState(false);
+	const [showHighlightColorSelector, setShowHighlightColorSelector] = useState(false);
 	const [_, forceUpdate] = useState(0); // Force re-render state
 	const headingSelectorRef = useRef<HTMLDivElement>(null);
+	const textColorSelectorRef = useRef<HTMLDivElement>(null);
+	const highlightColorSelectorRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (!editor) return;
@@ -48,16 +54,22 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 			if (headingSelectorRef.current && !headingSelectorRef.current.contains(event.target as Node)) {
 				setShowHeadingSelector(false);
 			}
+			if (textColorSelectorRef.current && !textColorSelectorRef.current.contains(event.target as Node)) {
+				setShowTextColorSelector(false);
+			}
+			if (highlightColorSelectorRef.current && !highlightColorSelectorRef.current.contains(event.target as Node)) {
+				setShowHighlightColorSelector(false);
+			}
 		};
 
-		if (showHeadingSelector) {
+		if (showHeadingSelector || showTextColorSelector || showHighlightColorSelector) {
 			document.addEventListener('mousedown', handleClickOutside);
 		}
 
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [showHeadingSelector]);
+	}, [showHeadingSelector, showTextColorSelector, showHighlightColorSelector]);
 
 	if (!editor) {
 		return null;
@@ -76,6 +88,46 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 		editor.chain().focus().setParagraph().run();
 		setShowHeadingSelector(false);
 	}
+
+	const setTextColor = (color: string) => {
+		editor.chain().focus().setColor(color).run();
+		setShowTextColorSelector(false);
+	};
+
+	const unsetTextColor = () => {
+		editor.chain().focus().unsetColor().run();
+		setShowTextColorSelector(false);
+	}
+
+	const setHighlightColor = (color: string) => {
+		editor.chain().focus().setHighlight({ color: color }).run();
+		setShowHighlightColorSelector(false);
+	};
+	
+	const unsetHighlightColor = () => {
+		editor.chain().focus().unsetHighlight().run();
+		setShowHighlightColorSelector(false);
+	}
+
+	const TEXT_COLORS = [
+		{ name: 'Rojo', color: '#ef4444' },
+		{ name: 'Naranja', color: '#f97316' },
+		{ name: 'Amarillo', color: '#eab308' },
+		{ name: 'Verde', color: '#22c55e' },
+		{ name: 'Azul', color: '#3b82f6' },
+		{ name: 'Morado', color: '#a855f7' },
+		{ name: 'Rosa', color: '#ec4899' },
+	];
+
+	const HIGHLIGHT_COLORS = [
+		{ name: 'Rojo', color: '#ef4444' },
+		{ name: 'Naranja', color: '#f97316' },
+		{ name: 'Amarillo', color: '#eab308' },
+		{ name: 'Verde', color: '#22c55e' },
+		{ name: 'Azul', color: '#3b82f6' },
+		{ name: 'Morado', color: '#a855f7' },
+		{ name: 'Rosa', color: '#ec4899' },
+	];
 
 	const toggleBulletList = () => editor.chain().focus().toggleBulletList().run();
 	const toggleOrderedList = () => editor.chain().focus().toggleOrderedList().run();
@@ -130,6 +182,72 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 						<Button onClick={() => toggleHeading(4)} isActive={editor.isActive('heading', { level: 4 })} icon={Heading4} title="Título 4" />
 						<Button onClick={() => toggleHeading(5)} isActive={editor.isActive('heading', { level: 5 })} icon={Heading5} title="Título 5" />
 						<Button onClick={() => toggleHeading(6)} isActive={editor.isActive('heading', { level: 6 })} icon={Heading6} title="Título 6" />
+					</div>
+				)}
+			</div>
+
+			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
+
+			{/* Text Color Button */}
+			<div className="relative" ref={textColorSelectorRef}>
+				<Button
+					onClick={() => setShowTextColorSelector(!showTextColorSelector)}
+					isActive={!!editor.getAttributes('textStyle').color}
+					icon={Baseline}
+					title="Color de texto"
+				/>
+				{showTextColorSelector && (
+					<div className="absolute bottom-full mb-2 left-0 flex flex-col bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-3 gap-2 z-50 animate-in fade-in slide-in-from-bottom-1 min-w-50">
+						<div className="grid grid-cols-4 gap-2">
+							<button 
+								onClick={unsetTextColor}
+								className="w-6 h-6 rounded border border-[#3e3e3e] flex items-center justify-center hover:bg-[#3e3e3e] transition-colors"
+								title="Por defecto"
+							>
+								<span className="text-xs text-white">A</span>
+							</button>
+							{TEXT_COLORS.map(({ name, color }) => (
+								<button
+									key={name}
+									onClick={() => setTextColor(color)}
+									className="w-6 h-6 rounded border border-transparent hover:scale-110 transition-transform"
+									style={{ backgroundColor: color }}
+									title={name}
+								/>
+							))}
+						</div>
+					</div>
+				)}
+			</div>
+
+			{/* Highlight Button */}
+			<div className="relative" ref={highlightColorSelectorRef}>
+				<Button
+					onClick={() => setShowHighlightColorSelector(!showHighlightColorSelector)}
+					isActive={editor.isActive('highlight')}
+					icon={Highlighter}
+					title="Resaltar"
+				/>
+				{showHighlightColorSelector && (
+					<div className="absolute bottom-full mb-2 left-0 flex flex-col bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-3 gap-2 z-50 animate-in fade-in slide-in-from-bottom-1 min-w-50">
+						<div className="grid grid-cols-4 gap-2">
+							<button 
+								onClick={unsetHighlightColor}
+								className="w-6 h-6 rounded border border-[#3e3e3e] relative hover:bg-[#3e3e3e] transition-colors"
+								title="Sin resaltar"
+							>
+								<div className="absolute inset-0 m-auto w-4 h-px bg-red-500 rotate-45" />
+							</button>
+							{HIGHLIGHT_COLORS.map(({ name, color }) => (
+								<button
+									key={name}
+									onClick={() => setHighlightColor(color)}
+									className="w-6 h-6 rounded border border-transparent hover:scale-110 transition-transform"
+									style={{ backgroundColor: color }}
+									title={name}
+								/>
+							))}
+						</div>
 					</div>
 				)}
 			</div>

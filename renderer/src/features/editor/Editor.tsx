@@ -6,6 +6,8 @@ import Image from "@tiptap/extension-image"
 import Placeholder from "@tiptap/extension-placeholder"
 import Underline from "@tiptap/extension-underline"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
+import { TextStyle } from "@tiptap/extension-text-style"
+import { Color } from "@tiptap/extension-color"
 import { common, createLowlight } from "lowlight"
 import { useEffect } from "react"
 import { EditorToolbar } from "./components/EditorToolbar"
@@ -60,9 +62,13 @@ export default function Editor({ note }: EditorProps) {
 				codeBlock: false,
 			}),
 			TabHandler,
-			Highlight,
+			Highlight.configure({
+				multicolor: true,
+			}),
 			Underline,
 			Image,
+			TextStyle,
+			Color,
 			Placeholder.configure({
 				placeholder: "Empieza a escribir...",
 			}),
