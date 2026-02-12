@@ -9,6 +9,7 @@ interface AppContextType {
 	notebooks: Notebook[];
 	setNotebooks: (notebooks: Notebook[]) => void;
 	refreshNotebooks: () => Promise<void>;
+	updateNoteInContext: (noteId: string, content: any) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,6 +28,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		}
 	};
 
+	const updateNoteInContext = (noteId: string, content: any) => {
+		setNotebooks(prevNotebooks => {
+			return prevNotebooks.map(notebook => {
+				if (notebook.notebookNotes?.some(n => n.id === noteId)) {
+					return {
+						...notebook,
+						notebookNotes: notebook.notebookNotes.map(note => 
+							note.id === noteId ? { ...note, content } : note
+						)
+					};
+				}
+				return notebook;
+			});
+		});
+	};
+
 	return (
 		<AppContext.Provider value={{
 			selectedNotebookId,
@@ -35,7 +52,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 			setSelectedNoteId,
 			notebooks,
 			setNotebooks,
-			refreshNotebooks
+			refreshNotebooks,
+			updateNoteInContext
 		}}>
 			{children}
 		</AppContext.Provider>

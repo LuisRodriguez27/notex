@@ -3,7 +3,7 @@ import { type Editor } from "@tiptap/react";
 import { type Note } from "@/shared/types";
 import { NotesApiService } from "@/api/NotesApiService";
 
-export const useAutoSave = (editor: Editor | null, note: Note) => {
+export const useAutoSave = (editor: Editor | null, note: Note, onSave?: (content: any) => void) => {
 	const [isSaving, setIsSaving] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
 
@@ -23,6 +23,12 @@ export const useAutoSave = (editor: Editor | null, note: Note) => {
 				await NotesApiService.updateNote(note.id, {
 					content: content,
 				});
+				
+				// Call the optional onSave callback to update local state
+				if (onSave) {
+					onSave(content);
+				}
+
 				// Reset dirty state after successful save
 				isDirtyRef.current = false;
 				setIsDirty(false);
@@ -32,7 +38,7 @@ export const useAutoSave = (editor: Editor | null, note: Note) => {
 				setIsSaving(false);
 			}
 		},
-		[note.id]
+		[note.id, onSave]
 	);
 
 	// Setup listeners for changes and auto-save

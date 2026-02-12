@@ -13,7 +13,7 @@ import { useEffect } from "react"
 import { EditorToolbar } from "./components/EditorToolbar"
 import { type Note } from "@/shared/types"
 import { useAutoSave } from "./hooks/useAutoSave"
-
+import { useAppContext } from "@/context/AppContext"
 // Configuración de resaltado de sintaxis
 const lowlight = createLowlight(common)
 
@@ -56,6 +56,11 @@ interface EditorProps {
 }
 
 export default function Editor({ note }: EditorProps) {
+	// Debug incoming content
+	console.log("Editor loading note:", note.id, "Content:", note.content);
+	
+	const { updateNoteInContext } = useAppContext();
+
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -93,7 +98,9 @@ export default function Editor({ note }: EditorProps) {
 	}, [note.id]); // Re-create editor when note ID changes to ensure content is swapped
 
 	// Initialize auto-save hook
-	const { isSaving, isDirty } = useAutoSave(editor, note);
+	const { isSaving, isDirty } = useAutoSave(editor, note, (content) => {
+		updateNoteInContext(note.id, content);
+	});
 
 	// If note changes, update content if key didn't force re-mount
 	useEffect(() => {
