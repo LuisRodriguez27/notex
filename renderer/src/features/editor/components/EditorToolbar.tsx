@@ -23,9 +23,11 @@ import { useState, useRef, useEffect } from 'react';
 
 interface EditorToolbarProps {
 	editor: Editor | null;
+	isSaving: boolean;
+	isDirty: boolean;
 }
 
-export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
+export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps) => {
 	const [showHeadingSelector, setShowHeadingSelector] = useState(false);
 	const [showTextColorSelector, setShowTextColorSelector] = useState(false);
 	const [showHighlightColorSelector, setShowHighlightColorSelector] = useState(false);
@@ -157,7 +159,7 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 	const isHeadingActive = editor.isActive('heading');
 
 	return (
-		<div className="flex items-center gap-1 border-t border-[#2d2d2d] p-2 bg-[#1e1e1e] relative">
+		<div className="flex flex-wrap items-center gap-1 border-t border-[#2d2d2d] p-2 bg-[#1e1e1e] relative">
 			<Button onClick={toggleBold} isActive={editor.isActive('bold')} icon={Bold} title="Negrita" />
 			<Button onClick={toggleItalic} isActive={editor.isActive('italic')} icon={Italic} title="Cursiva" />
 			<Button onClick={toggleUnderline} isActive={editor.isActive('underline')} icon={Underline} title="Subrayado" />
@@ -266,6 +268,10 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
 
 			<Button onClick={addImage} isActive={false} icon={ImageIcon} title="Imagen" />
 
+			{/* Status Indicator */}
+			<div className="ml-auto px-2 text-xs text-gray-500 whitespace-nowrap min-w-fit">
+				{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}
+			</div>
 		</div>
 	);
 };

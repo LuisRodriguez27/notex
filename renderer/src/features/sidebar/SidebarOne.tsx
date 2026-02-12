@@ -36,7 +36,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 			{/* Header / Toggle */}
 			<div className={`flex items-center h-12 ${isExpanded ? 'justify-between px-3' : 'justify-center'}`}>
 				{isExpanded && (
-					<span className="font-semibold text-xs text-[#858585] uppercase tracking-wider pl-1">Notebooks</span>
+					<span className="font-semibold text-sm text-[#858585] uppercase tracking-wider pl-1">Notebooks</span>
 				)}
 				
 				<div className={`flex items-center ${isExpanded ? 'gap-1' : ''}`}>
@@ -83,10 +83,10 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 			</div>
 
 			{/* Bottom Actions */}
-			<div className={`mt-auto p-2 border-t border-[#3e3e3e] ${!isExpanded && 'flex flex-col items-center'}`}>
-				<button className={`flex items-center gap-2 px-2 py-2 rounded text-sm text-[#858585] hover:text-[#d4d4d4] hover:bg-[#37373d] transition-colors w-full ${!isExpanded && 'justify-center'}`} title="Trash">
-					<Trash2 size={16} />
-					{isExpanded && <span>Trash</span>}
+			<div className={`mt-auto p-2 border-t border-[#3e3e3e] ${!isExpanded ? 'flex flex-col items-center' : ''}`}>
+				<button className={`flex items-center gap-2 px-2 py-2 rounded text-sm text-[#858585] hover:text-[#d4d4d4] hover:bg-[#37373d] transition-colors w-full ${!isExpanded ? 'justify-center' : ''}`} title="Trash">
+					<Trash2 size={18} className="shrink-0" />
+					{isExpanded && <span className="truncate">Trash</span>}
 				</button>
 			</div>
 		</div>

@@ -119,11 +119,8 @@ export default function Editor({ note }: EditorProps) {
 			<div className="flex-1 overflow-auto">
 				<EditorContent editor={editor} className="h-full" />
 			</div>
-			{/* Optional: Display saving status in toolbar or here */}
-			<div className="px-4 py-1 text-xs text-gray-500 absolute bottom-14 right-4 z-10">
-				{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}
-			</div>
-			<EditorToolbar editor={editor} />
+			{/* Status is now inside EditorToolbar */}
+			<EditorToolbar editor={editor} isSaving={isSaving} isDirty={isDirty} />
 		</div>
 	)
 }

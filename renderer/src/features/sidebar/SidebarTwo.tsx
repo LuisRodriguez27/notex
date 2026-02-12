@@ -56,7 +56,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 			<div className={`flex items-center h-12 border-b border-[#2d2d2d] ${isExpanded ? 'justify-between px-4' : 'justify-center'}`}>
 				{isExpanded ? (
 					<>
-						<span className="text-xs font-semibold text-[#858585] uppercase tracking-wider">
+						<span className="text-sm font-semibold text-[#858585] uppercase tracking-wider">
 							{notes.length} Notes
 						</span>
 						<div className="flex items-center gap-1">

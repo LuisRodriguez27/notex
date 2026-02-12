@@ -10,7 +10,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
     <div className="flex h-screen w-screen bg-[#1e1e1e] text-[#d4d4d4] overflow-hidden font-sans">
       {/* Sidebar 1: Notebooks */}
       <aside
-        className={`${expandSidebarOne ? 'w-[15vw] min-w-[15vw]' : 'w-[4vw] min-w-[4vw]'} bg-[#252526] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden relative`}
+        className={`${expandSidebarOne ? 'w-64 min-w-64' : 'w-16 min-w-16'} bg-[#252526] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden relative shrink-0`}
       >
         <SidebarOne isExpanded={expandSidebarOne} onToggle={() => setExpandSidebarOne(!expandSidebarOne)} />
       </aside>
@@ -34,7 +34,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
         <div className="flex-1 flex overflow-hidden relative">
           {/* Sidebar 2: Notes List */}
           <aside
-            className={`${expandSidebarTwo ? 'w-[20vw] min-w-[20vw]' : 'w-[4vw] min-w-[4vw]'} bg-[#1e1e1e] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-10 overflow-hidden relative`}
+            className={`${expandSidebarTwo ? 'w-80 min-w-80' : 'w-16 min-w-16'} bg-[#1e1e1e] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-10 overflow-hidden relative shrink-0`}
           >
             <SidebarTwo isExpanded={expandSidebarTwo} onToggle={() => setExpandSidebarTwo(!expandSidebarTwo)} />
           </aside>
@@ -42,7 +42,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
           {/* Main Content Area (Editor) */}
           <main className="flex-1 flex flex-col min-w-0 bg-[#1e1e1e]">
             {/* Editor Content */}
-            <div className="flex-1 overflow-auto p-8 relative">
+            <div className="flex-1 overflow-auto p-4 relative">
               {children}
             </div>
           </main>
