@@ -10,7 +10,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
     <div className="flex h-screen w-screen bg-[#1e1e1e] text-[#d4d4d4] overflow-hidden font-sans">
       {/* Sidebar 1: Notebooks */}
       <aside
-        className={`${expandSidebarOne ? 'w-[15vw] min-w-[15vw]' : 'w-[3vw] min-w-[3vw]'} bg-[#252526] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden relative`}
+        className={`${expandSidebarOne ? 'w-[15vw] min-w-[15vw]' : 'w-[4vw] min-w-[4vw]'} bg-[#252526] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden relative`}
       >
         <SidebarOne isExpanded={expandSidebarOne} onToggle={() => setExpandSidebarOne(!expandSidebarOne)} />
       </aside>
@@ -34,7 +34,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
         <div className="flex-1 flex overflow-hidden relative">
           {/* Sidebar 2: Notes List */}
           <aside
-            className={`${expandSidebarTwo ? 'w-[20vw] min-w-[20vw]' : 'w-[3vw] min-w-[3vw]'} bg-[#1e1e1e] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-10 overflow-hidden relative`}
+            className={`${expandSidebarTwo ? 'w-[20vw] min-w-[20vw]' : 'w-[4vw] min-w-[4vw]'} bg-[#1e1e1e] border-r border-[#3e3e3e] flex flex-col transition-all duration-300 ease-in-out z-10 overflow-hidden relative`}
           >
             <SidebarTwo isExpanded={expandSidebarTwo} onToggle={() => setExpandSidebarTwo(!expandSidebarTwo)} />
           </aside>

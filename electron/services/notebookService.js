@@ -34,15 +34,15 @@ class NotebookService {
 
 	async createNotebook(notebookData) {
 		try {
-			if (!notebookData || !notebookData.title) {
-				throw new Error('Notebook title is required');
+			if (!notebookData || !notebookData.name) {
+				throw new Error('Notebook name is required');
 			}
 
 			const now = new Date().toISOString();
 			
 			const newNotebook = new Notebook({
 				id: randomUUID(),
-				name: notebookData.title,
+				name: notebookData.name,
 				createdAt: now,
 				updatedAt: now,
 			});
