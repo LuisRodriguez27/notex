@@ -7,17 +7,17 @@ declare global {
 			// Notebooks
 			getAllNotebooks: () => Promise<Notebook[]>;
 			getNotebookById: (id: string) => Promise<Notebook>;
-			createNotebook: (notebookData: { title: string }) => Promise<Notebook>;
-			updateNotebook: (id: string, notebookData: Partial<{ title: string }>) => Promise<Notebook>;
+			createNotebook: (notebookData: Partial<Notebook>) => Promise<Notebook>;
+			updateNotebook: (id: string, notebookData: Partial<Notebook>) => Promise<Notebook>;
 			deleteNotebook: (id: string) => Promise<{ success: boolean; id: string }>;
 
 			// Notes
 			getNoteById: (id: string) => Promise<Note>;
-			createNote: (noteData: { notebookId: string; title: string; content?: any }) => Promise<Note>;
-			updateNote: (id: string, noteData: Partial<{ title: string; content: any }>) => Promise<Note>;
+			createNote: (noteData: Partial<Note>) => Promise<Note>;
+			updateNote: (id: string, noteData: Partial<Note>) => Promise<Note>;
 			deleteNote: (id: string) => Promise<{ success: boolean; id: string }>;
 		};
 	}
 }
 
-export {};
+export { };

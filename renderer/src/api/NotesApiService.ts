@@ -5,11 +5,11 @@ getNoteById: async (id: string): Promise<Note> => {
 return window.api.getNoteById(id);
 },
 
-createNote: async (noteData: { notebookId: string; title: string; content?: any }): Promise<Note> => {
+createNote: async (noteData: Partial<Note>): Promise<Note> => {
 return window.api.createNote(noteData);
 },
 
-updateNote: async (id: string, noteData: Partial<{ title: string; content: any }>): Promise<Note> => {
+updateNote: async (id: string, noteData: Partial<Note>): Promise<Note> => {
 return window.api.updateNote(id, noteData);
 },
 

@@ -38,10 +38,7 @@ class NoteService {
 				throw new Error('Note title and notebook ID are required');
 			}
 
-			const now = new Date().toLocaleString('en-CA', { 
-				timeZone: 'America/Mexico_City', 
-				hour12: false 
-			}).replace(', ', 'T');	
+			const now = new Date().toISOString();	
 
 			const newNote = new Note({
 				id: randomUUID(),
@@ -72,10 +69,7 @@ class NoteService {
 				throw new Error('Note not found');
 			}
 
-			const now = new Date().toLocaleString('en-CA', { 
-				timeZone: 'America/Mexico_City', 
-				hour12: false 
-			}).replace(', ', 'T');
+			const now = new Date().toISOString();
 
 			const updatePayload = {
 				title: noteData.title !== undefined ? noteData.title : existingNote.title,

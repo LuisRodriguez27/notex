@@ -32,9 +32,75 @@ function seed() {
 
 		// Insertar algunas notas para cada libreta
 		const noteTemplates = [
-			{ title: `Bienvenida a ${nb.name}`, content: `Esta es tu primera nota en la libreta ${nb.name}.` },
-			{ title: 'Tareas pendientes', content: '- [ ] Revisar correos\n- [ ] Actualizar documentación' },
-			{ title: 'Notas de reunión', content: 'Asistentes: Juan, Maria, Pedro.\nAcuerdos: Seguir trabajando.' }
+			{ 
+				title: `Bienvenida a ${nb.name}`, 
+				content: {
+					type: 'doc',
+					content: [
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text: `Esta es tu primera nota en la libreta ${nb.name}.`
+								}
+							]
+						}
+					]
+				}
+			},
+			{ 
+				title: 'Tareas pendientes', 
+				content: {
+					type: 'doc',
+					content: [
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text: '- [ ] Revisar correos'
+								}
+							]
+						},
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text: '- [ ] Actualizar documentación'
+								}
+							]
+						}
+					]
+				}
+			},
+			{ 
+				title: 'Notas de reunión', 
+				content: {
+					type: 'doc',
+					content: [
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text: 'Asistentes: Juan, Maria, Pedro.'
+								}
+							]
+						},
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text: 'Acuerdos: Seguir trabajando.'
+								}
+							]
+						}
+					]
+				}
+			}
 		];
 
 		noteTemplates.forEach(template => {
@@ -42,7 +108,7 @@ function seed() {
 				randomUUID(),
 				nb.id,
 				template.title,
-				template.content,
+				JSON.stringify(template.content),
 				now,
 				now
 			);

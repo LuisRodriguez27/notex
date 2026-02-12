@@ -38,10 +38,7 @@ class NotebookService {
 				throw new Error('Notebook title is required');
 			}
 
-			const now = new Date().toLocaleString('en-CA', { 
-				timeZone: 'America/Mexico_City', 
-				hour12: false 
-			}).replace(', ', 'T');
+			const now = new Date().toISOString();
 			
 			const newNotebook = new Notebook({
 				id: randomUUID(),
@@ -70,10 +67,7 @@ class NotebookService {
 				throw new Error('Notebook not found');
 			}
 
-			const now = new Date().toLocaleString('en-CA', { 
-				timeZone: 'America/Mexico_City', 
-				hour12: false 
-			}).replace(', ', 'T');
+			const now = new Date().toISOString();
 
 			const updatePayload = {
 				name: notebookData.title || existingNotebook.name,

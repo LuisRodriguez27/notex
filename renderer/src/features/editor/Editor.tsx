@@ -9,6 +9,7 @@ import { common, createLowlight } from "lowlight"
 import { useEffect } from "react"
 import { EditorToolbar } from "./components/EditorToolbar"
 import { type Note } from "@/shared/types"
+import { useAutoSave } from "./hooks/useAutoSave"
 
 // Configuración de resaltado de sintaxis
 const lowlight = createLowlight(common)
@@ -40,11 +41,13 @@ export default function Editor({ note }: EditorProps) {
 					"prose prose-invert focus:outline-none max-w-none h-full p-4",
 			},
 		},
-		onUpdate: ({ editor }) => {
-			// TODO: Implement save logic or emit change event
-			console.log('Content updated:', editor.getJSON());
+		onUpdate: () => {
+			// Logic handled by useAutoSave
 		}
 	}, [note.id]); // Re-create editor when note ID changes to ensure content is swapped
+
+	// Initialize auto-save hook
+	const { isSaving, isDirty } = useAutoSave(editor, note);
 
 	// If note changes, update content if key didn't force re-mount
 	useEffect(() => {
@@ -62,6 +65,10 @@ export default function Editor({ note }: EditorProps) {
 		<div className="flex flex-col h-full bg-[#1e1e1e]">
 			<div className="flex-1 overflow-auto">
 				<EditorContent editor={editor} className="h-full" />
+			</div>
+			{/* Optional: Display saving status in toolbar or here */}
+			<div className="px-4 py-1 text-xs text-gray-500 absolute bottom-14 right-4 z-10">
+				{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}
 			</div>
 			<EditorToolbar editor={editor} />
 		</div>

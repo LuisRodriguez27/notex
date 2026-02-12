@@ -10,11 +10,11 @@ export const NotebooksApiService = {
 		return window.api.getNotebookById(id);
 	},
 
-	createNotebook: async (title: string): Promise<Notebook> => {
-		return window.api.createNotebook({ title });
+	createNotebook: async (notebookData: Partial<Notebook>): Promise<Notebook> => {
+		return window.api.createNotebook(notebookData);
 	},
 
-	updateNotebook: async (id: string, notebookData: Partial<{ title: string }>): Promise<Notebook> => {
+	updateNotebook: async (id: string, notebookData: Partial<Notebook>): Promise<Notebook> => {
 		return window.api.updateNotebook(id, notebookData);
 	},
 
