@@ -32,8 +32,8 @@ class NoteRepository {
 	create(noteData) {
 		const transaction = db.transaction(() => {
 			const noteStmt = db.prepare(`
-				INSERT INTO notes (id, notebookId, title, content, createdAt, updatedAt)
-				VALUES (?, ?, ?, ?, ?, ?)
+				INSERT INTO notes (id, notebookId, title, content, color, createdAt, updatedAt)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
 			`);
 
 			noteStmt.run(
@@ -41,6 +41,7 @@ class NoteRepository {
 				noteData.notebookId,
 				noteData.title,
 				this._stringifyContent(noteData.content),
+				noteData.color || null,
 				noteData.createdAt,
 				noteData.updatedAt
 			);
@@ -61,6 +62,7 @@ class NoteRepository {
 		const fieldsToUpdate = {};
 		if (noteData.title !== undefined) fieldsToUpdate.title = noteData.title;
 		if (noteData.content !== undefined) fieldsToUpdate.content = this._stringifyContent(noteData.content);
+		if (noteData.color !== undefined) fieldsToUpdate.color = noteData.color;
 		if (noteData.updatedAt !== undefined) fieldsToUpdate.updatedAt = noteData.updatedAt;
 
 		const fieldEntries = Object.entries(fieldsToUpdate);

@@ -38,13 +38,14 @@ class NotebookRepository {
 	create(notebookData) {
 		const transaction = db.transaction(() => {
 			const notebookStmt = db.prepare(`
-				INSERT INTO notebooks (id, name, createdAt, updatedAt)
-				VALUES (?, ?, ?, ?)
+				INSERT INTO notebooks (id, name, color, createdAt, updatedAt)
+				VALUES (?, ?, ?, ?, ?)
 			`);
 
 			notebookStmt.run(
 				notebookData.id,
 				notebookData.name,
+				notebookData.color || null,
 				notebookData.createdAt,
 				notebookData.updatedAt
 			);
@@ -64,6 +65,7 @@ class NotebookRepository {
 
 		const fieldsToUpdate = {};
 		if (notebookData.name !== undefined) fieldsToUpdate.name = notebookData.name;
+		if (notebookData.color !== undefined) fieldsToUpdate.color = notebookData.color;
 		if (notebookData.updatedAt !== undefined) fieldsToUpdate.updatedAt = notebookData.updatedAt;
 
 		const fieldEntries = Object.entries(fieldsToUpdate);

@@ -43,6 +43,7 @@ class NotebookService {
 			const newNotebook = new Notebook({
 				id: randomUUID(),
 				name: notebookData.name,
+				color: notebookData.color,
 				createdAt: now,
 				updatedAt: now,
 			});
@@ -71,6 +72,7 @@ class NotebookService {
 
 			const updatePayload = {
 				name: notebookData.title || existingNotebook.name,
+				color: notebookData.color,
 				updatedAt: now
 			};
 

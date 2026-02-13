@@ -31,6 +31,7 @@ db.exec(`
 	CREATE TABLE IF NOT EXISTS notebooks (
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
+		color TEXT,
 		createdAt TEXT NOT NULL,
 		updatedAt TEXT NOT NULL,
 		isDeleted INTEGER NOT NULL DEFAULT 0,
@@ -42,6 +43,7 @@ db.exec(`
 		notebookId TEXT NOT NULL,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
+		color TEXT,
 		createdAt TEXT NOT NULL,
 		updatedAt TEXT NOT NULL,
 		isDeleted INTEGER NOT NULL DEFAULT 0,

@@ -45,6 +45,7 @@ class NoteService {
 				notebookId: noteData.notebookId,
 				title: noteData.title,
 				content: noteData.content || '',
+				color: noteData.color,
 				createdAt: now,
 				updatedAt: now,
 			});
@@ -74,6 +75,7 @@ class NoteService {
 			const updatePayload = {
 				title: noteData.title !== undefined ? noteData.title : existingNote.title,
 				content: noteData.content !== undefined ? noteData.content : existingNote.content,
+				color: noteData.color !== undefined ? noteData.color : existingNote.color,
 				updatedAt: now,
 			};
 

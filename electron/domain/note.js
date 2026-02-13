@@ -1,9 +1,10 @@
 class Note {
-	constructor ({ id, notebookId, title, content, createdAt, updatedAt, isDeleted=0, isSynced=0 }) {
+	constructor ({ id, notebookId, title, content, color, createdAt, updatedAt, isDeleted=0, isSynced=0 }) {
 		this.id = id;
 		this.notebookId = notebookId;
 		this.title = title;
 		this.content = content;
+		this.color = color;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.isDeleted = isDeleted;
@@ -16,6 +17,7 @@ class Note {
 			notebookId: this.notebookId,
 			title: this.title,
 			content: this.content,
+			color: this.color,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 			isDeleted: this.isDeleted,

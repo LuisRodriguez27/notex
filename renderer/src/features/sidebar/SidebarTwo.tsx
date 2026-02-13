@@ -32,12 +32,13 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 			setNotes([]);
 		}
 	}, [selectedNotebookId, notebooks]);
-	const handleCreateNote = async (title: string) => {
+	const handleCreateNote = async (title: string, color?: string) => {
 		if (!selectedNotebookId) return;
 		await NotesApiService.createNote({ 
 			title, 
 			content: {}, 
-			notebookId: selectedNotebookId 
+			notebookId: selectedNotebookId,
+			color
 		});
 		await refreshNotebooks(); // This should update the notes list via the effect
 	};
@@ -96,6 +97,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 					<div
 						key={note.id}
 						className={`border-b border-[#2d2d2d] cursor-pointer transition-colors group ${isExpanded ? 'px-4 py-3' : 'py-3 flex justify-center'} ${selectedNoteId === note.id ? 'bg-[#37373d]' : 'hover:bg-[#2d2d2d]'}`}
+						style={{ backgroundColor: note.color ? note.color : undefined }}
 						onClick={() => setSelectedNoteId(note.id)}
 						title={!isExpanded ? note.title : ''}
 					>

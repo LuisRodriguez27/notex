@@ -17,8 +17,8 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 		refreshNotebooks();
 	}, []);
 
-	const handleCreateNotebook = async (title: string) => {
-		await NotebooksApiService.createNotebook({ name: title });
+	const handleCreateNotebook = async (title: string, color?: string) => {
+		await NotebooksApiService.createNotebook({ name: title, color });
 		await refreshNotebooks();
 	};
 
@@ -69,6 +69,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 						key={nb.id}
 						onClick={() => setSelectedNotebookId(nb.id)}
 						className={`flex items-center gap-2 py-3 border-b border-[#2d2d2d] text-sm cursor-pointer transition-colors ${selectedNotebookId === nb.id ? 'bg-[#37373d] text-white' : 'text-[#cccccc] hover:bg-[#2d2d2e]'} ${isExpanded ? 'px-4 justify-start' : 'justify-center'}`}
+						style={{ backgroundColor: nb.color ? nb.color : undefined }}
 						title={!isExpanded ? nb.name : ''}
 					>
 						<Book size={16} className="shrink-0 opacity-70" />
