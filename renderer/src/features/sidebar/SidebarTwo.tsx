@@ -152,7 +152,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 									/>
 								</div>
 								<div className="flex justify-between items-center text-xs">
-									<span className={`${selectedNoteId === note.id ? 'text-[#a1a1a1]' : 'text-[#666]'} shrink-0`}>
+									<span className={`${note.color || selectedNoteId === note.id ? 'text-[#e1e1e1]/80' : 'text-[#666]'} shrink-0`}>
 										{new Date(note.createdAt).toLocaleDateString()}
 									</span>
 								</div>
