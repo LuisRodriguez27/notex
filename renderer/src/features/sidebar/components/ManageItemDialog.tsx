@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-interface CreateDialogProps {
+interface ManageItemDialogProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onCreate: (value: string, color?: string) => Promise<void>;
+	onSubmit: (value: string, color?: string) => Promise<void>;
 	title: string;
 	inputLabel?: string;
 	placeholder?: string;
 	confirmText?: string;
+	initialValue?: string;
+	initialColor?: string;
 }
 
 const COLORS = [
@@ -21,27 +23,29 @@ const COLORS = [
 	'#5d5275', // Lavender
 ];
 
-export const CreateDialog = ({ 
+export const ManageItemDialog = ({ 
 	isOpen, 
 	onClose, 
-	onCreate,
+	onSubmit,
 	title,
 	inputLabel = "Title",
 	placeholder = "",
-	confirmText = "Create"
-}: CreateDialogProps) => {
-	const [value, setValue] = useState('');
-	const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+	confirmText = "Save",
+	initialValue = "",
+	initialColor = undefined,
+}: ManageItemDialogProps) => {
+	const [value, setValue] = useState(initialValue);
+	const [selectedColor, setSelectedColor] = useState<string | undefined>(initialColor);
 	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (isOpen) {
-			setValue('');
-			setSelectedColor(undefined);
+			setValue(initialValue);
+			setSelectedColor(initialColor);
 			setTimeout(() => inputRef.current?.focus(), 100);
 		}
-	}, [isOpen]);
+	}, [isOpen, initialValue, initialColor]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -49,10 +53,10 @@ export const CreateDialog = ({
 
 		setIsLoading(true);
 		try {
-			await onCreate(value, selectedColor);
+			await onSubmit(value, selectedColor);
 			onClose();
 		} catch (error) {
-			console.error('Error creating item:', error);
+			console.error('Error saving item:', error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -127,7 +131,7 @@ export const CreateDialog = ({
 							disabled={!value.trim() || isLoading}
 							className="px-3 py-1.5 text-xs font-medium bg-[#007acc] text-white rounded hover:bg-[#0062a3] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 						>
-							{isLoading ? 'Creating...' : confirmText}
+							{isLoading ? 'Saving...' : confirmText}
 						</button>
 					</div>
 				</form>

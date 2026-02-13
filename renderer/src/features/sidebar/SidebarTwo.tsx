@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { type Note } from '@/shared/types';
 import { ChevronLeft, ChevronRight, Plus, FileText } from 'lucide-react';
-import { CreateDialog } from './components/CreateDialog';
+import { ManageItemDialog } from './components/ManageItemDialog';
+import { ItemActionsMenu } from './components/ItemActionsMenu';
 import { NotesApiService } from '@/api/NotesApiService';
 // Note: We need api to fetch notes specifically if not already in context.
 // Assuming Context 'notebooks' might not have up-to-date notes if managed separately, 
@@ -17,7 +18,8 @@ interface SidebarTwoProps {
 export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks } = useAppContext();
 	const [notes, setNotes] = useState<Note[]>([]);
-	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [editingNote, setEditingNote] = useState<Note | null>(null);
 
 	useEffect(() => {
 		if (selectedNotebookId) {
@@ -32,25 +34,62 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 			setNotes([]);
 		}
 	}, [selectedNotebookId, notebooks]);
-	const handleCreateNote = async (title: string, color?: string) => {
+
+	const handleSave = async (title: string, color?: string) => {
 		if (!selectedNotebookId) return;
-		await NotesApiService.createNote({ 
-			title, 
-			content: {}, 
-			notebookId: selectedNotebookId,
-			color
-		});
-		await refreshNotebooks(); // This should update the notes list via the effect
+		
+		if (editingNote) {
+			await NotesApiService.updateNote(editingNote.id, { title, color });
+		} else {
+			await NotesApiService.createNote({ 
+				title, 
+				content: {}, 
+				notebookId: selectedNotebookId,
+				color
+			});
+		}
+		await refreshNotebooks();
+		setEditingNote(null);
+	};
+
+	const handleDelete = async (id: string) => {
+		if (confirm('Are you sure you want to delete this note?')) {
+			try {
+				await NotesApiService.deleteNote(id);
+				if (selectedNoteId === id) {
+					setSelectedNoteId(null);
+				}
+				await refreshNotebooks();
+			} catch (error) {
+				console.error("Failed to delete note:", error);
+			}
+		}
+	};
+
+	const openCreateDialog = () => {
+		setEditingNote(null);
+		setIsDialogOpen(true);
+	};
+
+	const openEditDialog = (note: Note) => {
+		setEditingNote(note);
+		setIsDialogOpen(true);
 	};
 
 	return (
 		<div className="flex flex-col h-full bg-[#1e1e1e] relative">
-			<CreateDialog
-				isOpen={isCreateDialogOpen}
-				onClose={() => setIsCreateDialogOpen(false)}
-				onCreate={handleCreateNote}
-				title="Create New Note"
+			<ManageItemDialog
+				isOpen={isDialogOpen}
+				onClose={() => {
+					setIsDialogOpen(false);
+					setEditingNote(null);
+				}}
+				onSubmit={handleSave}
+				title={editingNote ? "Edit Note" : "Create New Note"}
 				placeholder="My New Note"
+				confirmText={editingNote ? "Save Options" : "Create"}
+				initialValue={editingNote?.title}
+				initialColor={editingNote?.color}
 			/>
 
 			{/* Header */}
@@ -63,7 +102,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 						<div className="flex items-center gap-1">
 							{/* Create Note Action */}
 							<button 
-								onClick={() => setIsCreateDialogOpen(true)}
+								onClick={() => openCreateDialog()}
 								className="p-1 hover:bg-[#3e3e3e] rounded text-[#858585] hover:text-[#d4d4d4]"
 								disabled={!selectedNotebookId}
 								title={selectedNotebookId ? "Create Note" : "Select a notebook first"}
@@ -103,9 +142,15 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 					>
 						{isExpanded ? (
 							<>
-								<h3 className={`text-sm font-medium truncate mb-1 group-hover:text-white ${selectedNoteId === note.id ? 'text-white' : 'text-[#e1e1e1]'}`}>
-									{note.title}
-								</h3>
+								<div className="flex items-center justify-between mb-1">
+									<h3 className={`text-sm font-medium truncate group-hover:text-white flex-1 ${selectedNoteId === note.id ? 'text-white' : 'text-[#e1e1e1]'}`}>
+										{note.title}
+									</h3>
+									<ItemActionsMenu
+										onEdit={() => openEditDialog(note)}
+										onDelete={() => handleDelete(note.id)}
+									/>
+								</div>
 								<div className="flex justify-between items-center text-xs">
 									<span className={`${selectedNoteId === note.id ? 'text-[#a1a1a1]' : 'text-[#666]'} shrink-0`}>
 										{new Date(note.createdAt).toLocaleDateString()}

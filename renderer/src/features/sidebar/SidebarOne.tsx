@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { Menu, Book, Trash2, Plus } from 'lucide-react';
 import { NotebooksApiService } from '@/api/NotebokApiService';
-import { CreateDialog } from './components/CreateDialog';
+import { ManageItemDialog } from './components/ManageItemDialog';
+import { ItemActionsMenu } from './components/ItemActionsMenu';
+import type { Notebook } from '@/shared/types';
 
 interface SidebarOneProps {
 	isExpanded: boolean;
@@ -11,26 +13,62 @@ interface SidebarOneProps {
 
 export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 	const { notebooks, selectedNotebookId, setSelectedNotebookId, refreshNotebooks } = useAppContext();
-	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [editingNotebook, setEditingNotebook] = useState<Notebook | null>(null);
 
 	useEffect(() => {
 		refreshNotebooks();
 	}, []);
 
-	const handleCreateNotebook = async (title: string, color?: string) => {
-		await NotebooksApiService.createNotebook({ name: title, color });
+	const handleSave = async (title: string, color?: string) => {
+		if (editingNotebook) {
+			await NotebooksApiService.updateNotebook(editingNotebook.id, { name: title, color });
+		} else {
+			await NotebooksApiService.createNotebook({ name: title, color });
+		}
 		await refreshNotebooks();
+		setEditingNotebook(null);
+	};
+
+	const handleDelete = async (id: string) => {
+		if (confirm('Are you sure you want to delete this notebook?')) {
+			try {
+				await NotebooksApiService.deleteNotebook(id);
+				if (selectedNotebookId === id) {
+					setSelectedNotebookId(null);
+				}
+				await refreshNotebooks();
+			} catch (error) {
+				console.error("Failed to delete notebook:", error);
+			}
+		}
+	};
+
+	const openCreateDialog = () => {
+		setEditingNotebook(null);
+		setIsDialogOpen(true);
+	};
+
+	const openEditDialog = (notebook: Notebook) => {
+		setEditingNotebook(notebook);
+		setIsDialogOpen(true);
 	};
 
 	return (
 		<div className="w-full h-full flex flex-col relative">
-			{/* Create Dialog */}
-			<CreateDialog
-				isOpen={isCreateDialogOpen}
-				onClose={() => setIsCreateDialogOpen(false)}
-				onCreate={handleCreateNotebook}
-				title="Create New Notebook"
+			{/* Manage Item Dialog */}
+			<ManageItemDialog
+				isOpen={isDialogOpen}
+				onClose={() => {
+					setIsDialogOpen(false);
+					setEditingNotebook(null);
+				}}
+				onSubmit={handleSave}
+				title={editingNotebook ? "Edit Notebook" : "Create New Notebook"}
 				placeholder="My Notebook"
+				confirmText={editingNotebook ? "Save Options" : "Create"}
+				initialValue={editingNotebook?.name}
+				initialColor={editingNotebook?.color}
 			/>
 
 			{/* Header / Toggle */}
@@ -44,7 +82,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
-								setIsCreateDialogOpen(true);
+								openCreateDialog();
 							}}
 							className="p-1.5 hover:bg-[#3e3e3e] rounded text-[#858585] hover:text-white transition-colors"
 							title="Create Notebook"
@@ -68,12 +106,20 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 					<div
 						key={nb.id}
 						onClick={() => setSelectedNotebookId(nb.id)}
-						className={`flex items-center gap-2 py-3 border-b border-[#2d2d2d] text-sm cursor-pointer transition-colors ${selectedNotebookId === nb.id ? 'bg-[#37373d] text-white' : 'text-[#cccccc] hover:bg-[#2d2d2e]'} ${isExpanded ? 'px-4 justify-start' : 'justify-center'}`}
+						className={`group relative flex items-center gap-2 py-3 border-b border-[#2d2d2d] text-sm cursor-pointer transition-colors ${selectedNotebookId === nb.id ? 'bg-[#37373d] text-white' : 'text-[#cccccc] hover:bg-[#2d2d2e]'} ${isExpanded ? 'px-4 justify-start' : 'justify-center'}`}
 						style={{ backgroundColor: nb.color ? nb.color : undefined }}
 						title={!isExpanded ? nb.name : ''}
 					>
 						<Book size={16} className="shrink-0 opacity-70" />
-						{isExpanded && <span className="truncate">{nb.name}</span>}
+						{isExpanded && (
+							<>
+								<span className="truncate flex-1">{nb.name}</span>
+								<ItemActionsMenu
+									onEdit={() => openEditDialog(nb)}
+									onDelete={() => handleDelete(nb.id)}
+								/>
+							</>
+						)}
 					</div>
 				))}
 				{notebooks.length === 0 && (
