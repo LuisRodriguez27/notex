@@ -8,7 +8,7 @@ export interface Note {
   notebookId: string; 
   title: string;
   content: NoteContent; 
-  color?: string;
+  color?: string | null;
   createdAt: string;
   updatedAt?: string;
   isDeleted?: number;
@@ -18,7 +18,7 @@ export interface Note {
 export interface Notebook {
   id: string;
   name: string;
-  color?: string;
+  color?: string | null;
   createdAt: string;
   updatedAt?: string;
   isDeleted?: number;

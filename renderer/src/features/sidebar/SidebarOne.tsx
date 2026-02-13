@@ -22,7 +22,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 
 	const handleSave = async (title: string, color?: string) => {
 		if (editingNotebook) {
-			await NotebooksApiService.updateNotebook(editingNotebook.id, { name: title, color });
+			await NotebooksApiService.updateNotebook(editingNotebook.id, { name: title, color: color ?? null });
 		} else {
 			await NotebooksApiService.createNotebook({ name: title, color });
 		}

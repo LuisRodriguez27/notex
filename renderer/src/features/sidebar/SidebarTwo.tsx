@@ -39,7 +39,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 		if (!selectedNotebookId) return;
 		
 		if (editingNote) {
-			await NotesApiService.updateNote(editingNote.id, { title, color });
+			await NotesApiService.updateNote(editingNote.id, { title, color: color ?? null });
 		} else {
 			await NotesApiService.createNote({ 
 				title, 

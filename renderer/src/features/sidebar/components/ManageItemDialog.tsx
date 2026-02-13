@@ -10,7 +10,7 @@ interface ManageItemDialogProps {
 	placeholder?: string;
 	confirmText?: string;
 	initialValue?: string;
-	initialColor?: string;
+	initialColor?: string | null;
 }
 
 const COLORS = [
@@ -35,14 +35,14 @@ export const ManageItemDialog = ({
 	initialColor = undefined,
 }: ManageItemDialogProps) => {
 	const [value, setValue] = useState(initialValue);
-	const [selectedColor, setSelectedColor] = useState<string | undefined>(initialColor);
+	const [selectedColor, setSelectedColor] = useState<string | undefined>(initialColor || undefined);
 	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (isOpen) {
-			setValue(initialValue);
-			setSelectedColor(initialColor);
+			setValue(initialValue || "");
+			setSelectedColor(initialColor || undefined);
 			setTimeout(() => inputRef.current?.focus(), 100);
 		}
 	}, [isOpen, initialValue, initialColor]);
