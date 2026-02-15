@@ -43,16 +43,21 @@ app.whenReady().then(createWindow)
 // IPC handlers
 // Notebooks
 ipcMain.handle('notebooks:getAll', async () => await notebookService.getAllNotebooks());
+ipcMain.handle('notebooks:getDeleted', async () => await notebookService.getDeletedNotebooks());
 ipcMain.handle('notebooks:getById', async (_, id) => await notebookService.getNotebookById(id));
 ipcMain.handle('notebooks:create', async (_, notebookData) => await notebookService.createNotebook(notebookData));
 ipcMain.handle('notebooks:update', async (_, id, notebookData) => await notebookService.updateNotebook(id, notebookData));
 ipcMain.handle('notebooks:delete', async (_, id) => await notebookService.deleteNotebook(id));
+ipcMain.handle('notebooks:restore', async (_, id) => await notebookService.restoreNotebook(id));
 
 // Notes
+ipcMain.handle('notes:getAll', async () => await noteService.getAllNotes());
+ipcMain.handle('notes:getDeleted', async () => await noteService.getDeletedNotes());
 ipcMain.handle('notes:getById', async (_, id) => await noteService.getNoteById(id));
 ipcMain.handle('notes:create', async (_, noteData) => await noteService.createNote(noteData));
 ipcMain.handle('notes:update', async (_, id, noteData) => await noteService.updateNote(id, noteData));
 ipcMain.handle('notes:delete', async (_, id) => await noteService.deleteNote(id));
+ipcMain.handle('notes:restore', async (_, id) => await noteService.restoreNote(id));
 
 
 app.on('window-all-closed', () => {

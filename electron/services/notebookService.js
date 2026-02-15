@@ -13,6 +13,16 @@ class NotebookService {
 		}
 	};
 
+	async getDeletedNotebooks() {
+		try {
+			const notebooks = notebookRepository.findDeleted();
+			return notebooks.map(notebook => notebook.toPlainObject());
+		} catch (error) {
+			console.error('Error fetching deleted notebooks:', error);
+			throw new Error('Failed to fetch deleted notebooks');
+		}
+	};
+
 	async getNotebookById(id) {
 		try {
 			if (!id) {
@@ -111,6 +121,18 @@ class NotebookService {
 		} catch (error) {
 			console.error(`Error deleting notebook with ID ${id}:`, error);
 			throw new Error('Failed to delete notebook');
+		}
+	};
+
+	async restoreNotebook(id) {
+		try {
+			if (!id) {
+				throw new Error('Notebook ID is required');
+			}
+			return notebookRepository.restore(id);
+		} catch (error) {
+			console.error(`Error restoring notebook with ID ${id}:`, error);
+			throw new Error('Failed to restore notebook');
 		}
 	};
 

@@ -15,6 +15,20 @@ class NoteRepository {
 		}));
 	}
 
+	findDeleted() {
+		const stmt = db.prepare(`
+			SELECT * FROM notes
+			WHERE isDeleted = 1
+			ORDER BY createdAt DESC
+		`);
+		
+		const notes = stmt.all();
+		return notes.map(note => new Note({
+			...note,
+			content: this._parseContent(note.content)
+		}));
+	}
+
 	findById(id) {
 		const stmt = db.prepare(`
 			SELECT * FROM notes
@@ -90,6 +104,32 @@ class NoteRepository {
 			WHERE id = ?
 		`);
 		stmt.run(id);
+		return true;
+	}
+
+	restore(id) {
+		const transaction = db.transaction(() => {
+			// 1. Obtener la nota para saber a qué libreta pertenece
+			const note = db.prepare('SELECT notebookId FROM notes WHERE id = ?').get(id);
+			
+			if (note) {
+				// 2. Restaurar la libreta si está eliminada
+				db.prepare(`
+					UPDATE notebooks
+					SET isDeleted = 0
+					WHERE id = ? AND isDeleted = 1
+				`).run(note.notebookId);
+
+				// 3. Restaurar la nota
+				db.prepare(`
+					UPDATE notes
+					SET isDeleted = 0
+					WHERE id = ?
+				`).run(id);
+			}
+		});
+
+		transaction();
 		return true;
 	}
 

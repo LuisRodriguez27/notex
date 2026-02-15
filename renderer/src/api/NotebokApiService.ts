@@ -6,6 +6,10 @@ export const NotebooksApiService = {
 		return window.api.getAllNotebooks();
 	},
 
+	getDeletedNotebooks: async (): Promise<Notebook[]> => {
+		return window.api.getDeletedNotebooks();
+	},
+
 	getNotebookById: async (id: string): Promise<Notebook> => {
 		return window.api.getNotebookById(id);
 	},
@@ -20,5 +24,9 @@ export const NotebooksApiService = {
 
 	deleteNotebook: async (id: string): Promise<{ success: boolean; id: string }> => {
 		return window.api.deleteNotebook(id);
+	},
+	
+	restoreNotebook: async (id: string): Promise<boolean> => {
+		return window.api.restoreNotebook(id);
 	}
 };	

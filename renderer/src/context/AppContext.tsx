@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { Notebook } from '@/shared/types';
+import { NotebooksApiService } from '@/api/NotebokApiService';
 
 interface AppContextType {
 	selectedNotebookId: string | null;
@@ -21,7 +22,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
 	const refreshNotebooks = async () => {
 		try {
-			const data = await window.api.getAllNotebooks();
+			const data = await NotebooksApiService.getAllNotebooks();
 			setNotebooks(data);
 		} catch (error) {
 			console.error('Failed to refresh notebooks', error);

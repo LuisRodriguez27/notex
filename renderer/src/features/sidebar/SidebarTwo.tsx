@@ -4,6 +4,7 @@ import { type Note } from '@/shared/types';
 import { ChevronLeft, ChevronRight, Plus, FileText } from 'lucide-react';
 import { ManageItemDialog } from './components/ManageItemDialog';
 import { ItemActionsMenu } from './components/ItemActionsMenu';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { NotesApiService } from '@/api/NotesApiService';
 // Note: We need api to fetch notes specifically if not already in context.
 // Assuming Context 'notebooks' might not have up-to-date notes if managed separately, 
@@ -19,6 +20,8 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks } = useAppContext();
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+	const [editNoteToDelete, setEditNoteToDelete] = useState<string | null>(null);
 	const [editingNote, setEditingNote] = useState<Note | null>(null);
 
 	useEffect(() => {
@@ -52,11 +55,16 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 		setEditingNote(null);
 	};
 
-	const handleDelete = async (id: string) => {
-		if (confirm('Are you sure you want to delete this note?')) {
+	const confirmDelete = (id: string) => {
+		setEditNoteToDelete(id);
+		setIsDeleteConfirmOpen(true);
+	};
+
+	const handleDelete = async () => {
+		if (editNoteToDelete) {
 			try {
-				await NotesApiService.deleteNote(id);
-				if (selectedNoteId === id) {
+				await NotesApiService.deleteNote(editNoteToDelete);
+				if (selectedNoteId === editNoteToDelete) {
 					setSelectedNoteId(null);
 				}
 				await refreshNotebooks();
@@ -64,6 +72,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 				console.error("Failed to delete note:", error);
 			}
 		}
+		setEditNoteToDelete(null);
 	};
 
 	const openCreateDialog = () => {
@@ -90,6 +99,16 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 				confirmText={editingNote ? "Save Options" : "Create"}
 				initialValue={editingNote?.title}
 				initialColor={editingNote?.color}
+			/>
+
+			<ConfirmDialog
+				isOpen={isDeleteConfirmOpen}
+				onClose={() => setIsDeleteConfirmOpen(false)}
+				onConfirm={handleDelete}
+				title="Delete Note"
+				message="Are you sure you want to delete this note? It will be moved to trash."
+				confirmText="Delete"
+				isDangerous={true}
 			/>
 
 			{/* Header */}
@@ -148,7 +167,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 									</h3>
 									<ItemActionsMenu
 										onEdit={() => openEditDialog(note)}
-										onDelete={() => handleDelete(note.id)}
+									onDelete={() => confirmDelete(note.id)}
 									/>
 								</div>
 								<div className="flex justify-between items-center text-xs">

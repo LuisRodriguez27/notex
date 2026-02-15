@@ -19,6 +19,23 @@ class NotebookRepository {
 		});
 	}
 
+	findDeleted() {
+		const stmt = db.prepare(`
+			SELECT * FROM notebooks
+			WHERE isDeleted = 1
+			ORDER BY createdAt DESC
+		`);
+
+		const notebooks = stmt.all();
+		return notebooks.map(notebook => {
+			const notebookNotes = this.getNotesForNotebook(notebook.id);
+			return new Notebook({
+				...notebook,
+				notebookNotes
+			});
+		});
+	}
+
 	findById(id) {
 		const stmt = db.prepare(`
 			SELECT * FROM notebooks
@@ -87,12 +104,44 @@ class NotebookRepository {
 	}	
 
 	delete(id) {
-		const stmt = db.prepare(`
-			UPDATE notebooks
-			SET isDeleted = 1
-			WHERE id = ?
-		`);
-		stmt.run(id);
+		const transaction = db.transaction(() => {
+			// Marcar la libreta como eliminada
+			db.prepare(`
+				UPDATE notebooks
+				SET isDeleted = 1
+				WHERE id = ?
+			`).run(id);
+
+			// Marcar todas sus notas como eliminadas
+			db.prepare(`
+				UPDATE notes
+				SET isDeleted = 1
+				WHERE notebookId = ?
+			`).run(id);
+		});
+
+		transaction();
+		return true;
+	}
+
+	restore(id) {
+		const transaction = db.transaction(() => {
+			// Restaurar la libreta
+			db.prepare(`
+				UPDATE notebooks
+				SET isDeleted = 0
+				WHERE id = ?
+			`).run(id);
+
+			// Restaurar todas sus notas
+			db.prepare(`
+				UPDATE notes
+				SET isDeleted = 0
+				WHERE notebookId = ?
+			`).run(id);
+		});
+
+		transaction();
 		return true;
 	}
 

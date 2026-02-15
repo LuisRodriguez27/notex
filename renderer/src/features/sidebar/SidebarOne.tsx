@@ -4,6 +4,8 @@ import { Menu, Book, Trash2, Plus } from 'lucide-react';
 import { NotebooksApiService } from '@/api/NotebokApiService';
 import { ManageItemDialog } from './components/ManageItemDialog';
 import { ItemActionsMenu } from './components/ItemActionsMenu';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { TrashModal } from '@/features/trash/TrashModal';
 import type { Notebook } from '@/shared/types';
 
 interface SidebarOneProps {
@@ -14,6 +16,9 @@ interface SidebarOneProps {
 export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 	const { notebooks, selectedNotebookId, setSelectedNotebookId, refreshNotebooks } = useAppContext();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isTrashOpen, setIsTrashOpen] = useState(false);
+	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+	const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 	const [editingNotebook, setEditingNotebook] = useState<Notebook | null>(null);
 
 	useEffect(() => {
@@ -29,12 +34,17 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 		await refreshNotebooks();
 		setEditingNotebook(null);
 	};
+	
+	const confirmDelete = (id: string) => {
+		setItemToDelete(id);
+		setIsDeleteConfirmOpen(true);
+	};
 
-	const handleDelete = async (id: string) => {
-		if (confirm('Are you sure you want to delete this notebook?')) {
+	const handleDelete = async () => {
+		if (itemToDelete) {
 			try {
-				await NotebooksApiService.deleteNotebook(id);
-				if (selectedNotebookId === id) {
+				await NotebooksApiService.deleteNotebook(itemToDelete);
+				if (selectedNotebookId === itemToDelete) {
 					setSelectedNotebookId(null);
 				}
 				await refreshNotebooks();
@@ -42,6 +52,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 				console.error("Failed to delete notebook:", error);
 			}
 		}
+		setItemToDelete(null);
 	};
 
 	const openCreateDialog = () => {
@@ -69,6 +80,21 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 				confirmText={editingNotebook ? "Save Options" : "Create"}
 				initialValue={editingNotebook?.name}
 				initialColor={editingNotebook?.color}
+			/>
+
+			<ConfirmDialog
+				isOpen={isDeleteConfirmOpen}
+				onClose={() => setIsDeleteConfirmOpen(false)}
+				onConfirm={handleDelete}
+				title="Delete Notebook"
+				message="Are you sure you want to delete this notebook? All notes within it will be moved to trash."
+				confirmText="Delete"
+				isDangerous={true}
+			/>
+			
+			<TrashModal 
+				isOpen={isTrashOpen} 
+				onClose={() => setIsTrashOpen(false)} 
 			/>
 
 			{/* Header / Toggle */}
@@ -116,7 +142,7 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 								<span className="truncate flex-1">{nb.name}</span>
 								<ItemActionsMenu
 									onEdit={() => openEditDialog(nb)}
-									onDelete={() => handleDelete(nb.id)}
+									onDelete={() => confirmDelete(nb.id)}
 								/>
 							</>
 						)}
@@ -131,7 +157,11 @@ export const SidebarOne = ({ isExpanded, onToggle }: SidebarOneProps) => {
 
 			{/* Bottom Actions */}
 			<div className={`mt-auto p-2 border-t border-[#3e3e3e] ${!isExpanded ? 'flex flex-col items-center' : ''}`}>
-				<button className={`flex items-center gap-2 px-2 py-2 rounded text-sm text-[#858585] hover:text-[#d4d4d4] hover:bg-[#37373d] transition-colors w-full ${!isExpanded ? 'justify-center' : ''}`} title="Trash">
+				<button 
+					onClick={() => setIsTrashOpen(true)}
+					className={`flex items-center gap-2 px-2 py-2 rounded text-sm text-[#858585] hover:text-[#d4d4d4] hover:bg-[#37373d] transition-colors w-full ${!isExpanded ? 'justify-center' : ''}`} 
+					title="Trash"
+				>
 					<Trash2 size={18} className="shrink-0" />
 					{isExpanded && <span className="truncate">Trash</span>}
 				</button>

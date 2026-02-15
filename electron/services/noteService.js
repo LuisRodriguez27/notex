@@ -13,6 +13,16 @@ class NoteService {
 		}
 	};
 
+	async getDeletedNotes() {
+		try {
+			const notes = noteRepository.findDeleted();
+			return notes.map(note => note.toPlainObject());
+		} catch (error) {
+			console.error('Error fetching deleted notes:', error);
+			throw new Error('Failed to fetch deleted notes');
+		}
+	};
+
 	async getNoteById(id) {
 		try {
 			if (!id) {
@@ -114,6 +124,18 @@ class NoteService {
 		} catch (error) {
 			console.error(`Error deleting note with ID ${id}:`, error);
 			throw new Error('Failed to delete note');
+		}
+	}
+
+	async restoreNote(id) {
+		try {
+			if (!id) {
+				throw new Error('Note ID is required');
+			}
+			return noteRepository.restore(id);
+		} catch (error) {
+			console.error(`Error restoring note with ID ${id}:`, error);
+			throw new Error('Failed to restore note');
 		}
 	}
 }
