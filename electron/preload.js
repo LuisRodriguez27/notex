@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('api', {
   
   // Notes
   getAllNotes: () => ipcRenderer.invoke('notes:getAll'),
+  searchNotes: (query) => ipcRenderer.invoke('notes:search', query),
   getNoteById: (id) => ipcRenderer.invoke('notes:getById', id),
   getDeletedNotes: () => ipcRenderer.invoke('notes:getDeleted'),
   createNote: (noteData) => ipcRenderer.invoke('notes:create', noteData),

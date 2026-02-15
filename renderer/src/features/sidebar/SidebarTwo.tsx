@@ -17,7 +17,7 @@ interface SidebarTwoProps {
 }
 
 export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
-	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks } = useAppContext();
+	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks, searchQuery } = useAppContext();
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -40,13 +40,13 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 
 	const handleSave = async (title: string, color?: string) => {
 		if (!selectedNotebookId) return;
-		
+
 		if (editingNote) {
 			await NotesApiService.updateNote(editingNote.id, { title, color: color ?? null });
 		} else {
-			await NotesApiService.createNote({ 
-				title, 
-				content: {}, 
+			await NotesApiService.createNote({
+				title,
+				content: {},
 				notebookId: selectedNotebookId,
 				color
 			});
@@ -120,7 +120,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 						</span>
 						<div className="flex items-center gap-1">
 							{/* Create Note Action */}
-							<button 
+							<button
 								onClick={() => openCreateDialog()}
 								className="p-1 hover:bg-[#3e3e3e] rounded text-[#858585] hover:text-[#d4d4d4]"
 								disabled={!selectedNotebookId}
@@ -167,7 +167,7 @@ export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
 									</h3>
 									<ItemActionsMenu
 										onEdit={() => openEditDialog(note)}
-									onDelete={() => confirmDelete(note.id)}
+										onDelete={() => confirmDelete(note.id)}
 									/>
 								</div>
 								<div className="flex justify-between items-center text-xs">

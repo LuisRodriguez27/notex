@@ -42,6 +42,16 @@ class NoteService {
 		}
 	};
 
+	async searchNotes(query) {
+		try {
+			const notes = noteRepository.search(query);
+			return notes.map(note => note.toPlainObject());
+		} catch (error) {
+			console.error('Error searching notes:', error);
+			throw new Error('Failed to search notes');
+		}
+	}
+
 	async createNote(noteData) {
 		try {
 			if (!noteData || !noteData.title || !noteData.notebookId) {

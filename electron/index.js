@@ -52,6 +52,7 @@ ipcMain.handle('notebooks:restore', async (_, id) => await notebookService.resto
 
 // Notes
 ipcMain.handle('notes:getAll', async () => await noteService.getAllNotes());
+ipcMain.handle('notes:search', async (_, query) => await noteService.searchNotes(query));
 ipcMain.handle('notes:getDeleted', async () => await noteService.getDeletedNotes());
 ipcMain.handle('notes:getById', async (_, id) => await noteService.getNoteById(id));
 ipcMain.handle('notes:create', async (_, noteData) => await noteService.createNote(noteData));

@@ -14,6 +14,7 @@ declare global {
 
 			// Notes
 			getAllNotes: () => Promise<Note[]>;
+			searchNotes: (query: string) => Promise<Note[]>;
 			getDeletedNotes: () => Promise<Note[]>;
 			getNoteById: (id: string) => Promise<Note>;
 			createNote: (noteData: Partial<Note>) => Promise<Note>;

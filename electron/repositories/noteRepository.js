@@ -43,6 +43,23 @@ class NoteRepository {
 		});
 	}
 
+	search(query) {
+		const stmt = db.prepare(`
+			SELECT * FROM notes 
+			WHERE isDeleted = 0 
+			AND (title LIKE ? OR content LIKE ?)
+			ORDER BY updatedAt DESC
+		`);
+		
+		const searchPattern = `%${query}%`;
+		const notes = stmt.all(searchPattern, searchPattern);
+		
+		return notes.map(note => new Note({
+			...note,
+			content: this._parseContent(note.content)
+		}));
+	}
+
 	create(noteData) {
 		const transaction = db.transaction(() => {
 			const noteStmt = db.prepare(`
