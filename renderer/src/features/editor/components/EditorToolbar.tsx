@@ -8,7 +8,6 @@ import {
 	Heading3,
 	Heading4,
 	Heading5,
-	Heading6,
 	List,
 	ListOrdered,
 	Code2,
@@ -160,9 +159,9 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 
 	return (
 		<div className="flex flex-wrap items-center gap-1 border-t border-[#2d2d2d] p-2 bg-[#1e1e1e] relative">
-			<Button onClick={toggleBold} isActive={editor.isActive('bold')} icon={Bold} title="Negrita" />
-			<Button onClick={toggleItalic} isActive={editor.isActive('italic')} icon={Italic} title="Cursiva" />
-			<Button onClick={toggleUnderline} isActive={editor.isActive('underline')} icon={Underline} title="Subrayado" />
+			<Button onClick={toggleBold} isActive={editor.isActive('bold')} icon={Bold} title="Negrita (Ctrl+B)" />
+			<Button onClick={toggleItalic} isActive={editor.isActive('italic')} icon={Italic} title="Cursiva (Ctrl+I)" />
+			<Button onClick={toggleUnderline} isActive={editor.isActive('underline')} icon={Underline} title="Subrayado (Ctrl+U)" />
 
 			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
 
@@ -176,14 +175,13 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 				/>
 				{showHeadingSelector && (
 					<div className="absolute bottom-full mb-2 left-0 flex items-center bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-1 gap-1 z-50 animate-in fade-in slide-in-from-bottom-1">
-						<Button onClick={setParagraph} isActive={editor.isActive('paragraph')} icon={Type} title="Texto Normal" />
+						<Button onClick={setParagraph} isActive={editor.isActive('paragraph')} icon={Type} title="Texto Normal (Ctrl+Alt+0)" />
 						<div className="w-px h-4 bg-[#3e3e3e] mx-1" />
-						<Button onClick={() => toggleHeading(1)} isActive={editor.isActive('heading', { level: 1 })} icon={Heading1} title="Título 1" />
-						<Button onClick={() => toggleHeading(2)} isActive={editor.isActive('heading', { level: 2 })} icon={Heading2} title="Título 2" />
-						<Button onClick={() => toggleHeading(3)} isActive={editor.isActive('heading', { level: 3 })} icon={Heading3} title="Título 3" />
-						<Button onClick={() => toggleHeading(4)} isActive={editor.isActive('heading', { level: 4 })} icon={Heading4} title="Título 4" />
-						<Button onClick={() => toggleHeading(5)} isActive={editor.isActive('heading', { level: 5 })} icon={Heading5} title="Título 5" />
-						<Button onClick={() => toggleHeading(6)} isActive={editor.isActive('heading', { level: 6 })} icon={Heading6} title="Título 6" />
+						<Button onClick={() => toggleHeading(1)} isActive={editor.isActive('heading', { level: 1 })} icon={Heading1} title="Título 1 (Ctrl+Alt+1)" />
+						<Button onClick={() => toggleHeading(2)} isActive={editor.isActive('heading', { level: 2 })} icon={Heading2} title="Título 2 (Ctrl+Alt+2)" />
+						<Button onClick={() => toggleHeading(3)} isActive={editor.isActive('heading', { level: 3 })} icon={Heading3} title="Título 3 (Ctrl+Alt+3)" />
+						<Button onClick={() => toggleHeading(4)} isActive={editor.isActive('heading', { level: 4 })} icon={Heading4} title="Título 4 (Ctrl+Alt+4)" />
+						<Button onClick={() => toggleHeading(5)} isActive={editor.isActive('heading', { level: 5 })} icon={Heading5} title="Título 5 (Ctrl+Alt+5)" />
 					</div>
 				)}
 			</div>
@@ -228,7 +226,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 					onClick={() => setShowHighlightColorSelector(!showHighlightColorSelector)}
 					isActive={editor.isActive('highlight')}
 					icon={Highlighter}
-					title="Resaltar"
+					title="Resaltar (Ctrl+Shift+H)"
 				/>
 				{showHighlightColorSelector && (
 					<div className="absolute bottom-full mb-2 left-0 flex flex-col bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-3 gap-2 z-50 animate-in fade-in slide-in-from-bottom-1 min-w-50">
@@ -256,13 +254,13 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 
 			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
 
-			<Button onClick={toggleBulletList} isActive={editor.isActive('bulletList')} icon={List} title="Lista con viñetas" />
-			<Button onClick={toggleOrderedList} isActive={editor.isActive('orderedList')} icon={ListOrdered} title="Lista numerada" />
+			<Button onClick={toggleBulletList} isActive={editor.isActive('bulletList')} icon={List} title="Lista con viñetas (Ctrl+Shift+8)" />
+			<Button onClick={toggleOrderedList} isActive={editor.isActive('orderedList')} icon={ListOrdered} title="Lista numerada (Ctrl+Shift+7)" />
 
 			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
 
-			<Button onClick={toggleCodeBlock} isActive={editor.isActive('codeBlock')} icon={Code2} title="Bloque de código" />
-			<Button onClick={toggleBlockquote} isActive={editor.isActive('blockquote')} icon={Quote} title="Cita" />
+			<Button onClick={toggleCodeBlock} isActive={editor.isActive('codeBlock')} icon={Code2} title="Bloque de código (Ctrl+Alt+C)" />
+			<Button onClick={toggleBlockquote} isActive={editor.isActive('blockquote')} icon={Quote} title="Cita (Ctrl+Shift+B)" />
 
 			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
 
