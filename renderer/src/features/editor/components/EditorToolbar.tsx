@@ -16,7 +16,11 @@ import {
 	Type,
 	ALargeSmall,
 	Baseline,
-	Highlighter
+	Highlighter,
+	ListTodo,
+	Link2,
+	Table as TableIcon,
+	Youtube as YoutubeIcon,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
@@ -80,6 +84,43 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 		return null;
 	}
 
+	const toggleTaskList = () => editor.chain().focus().toggleTaskList().run();
+
+	const setLink = () => {
+		const previousUrl = editor.getAttributes('link').href
+		const url = window.prompt('URL', previousUrl)
+
+		// cancelled
+		if (url === null) {
+			return
+		}
+
+		// empty
+		if (url === '') {
+			editor.chain().focus().extendMarkRange('link').unsetLink().run()
+			return
+		}
+
+		// update link
+		editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+	}
+
+	const addTable = () => {
+		editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+	}
+
+	const addYoutube = () => {
+		const url = prompt('Enter YouTube URL')
+
+		if (url) {
+			editor.commands.setYoutubeVideo({
+				src: url,
+				width: 640,
+				height: 480,
+			})
+		}
+	}
+
 	const toggleBold = () => editor.chain().focus().toggleBold().run();
 	const toggleItalic = () => editor.chain().focus().toggleItalic().run();
 	const toggleUnderline = () => editor.chain().focus().toggleUnderline().run();
@@ -108,7 +149,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 		editor.chain().focus().setHighlight({ color: color }).run();
 		setShowHighlightColorSelector(false);
 	};
-	
+
 	const unsetHighlightColor = () => {
 		editor.chain().focus().unsetHighlight().run();
 		setShowHighlightColorSelector(false);
@@ -149,7 +190,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 		if (!file) {
 			return;
 		}
-		
+
 		if (!selectedNoteId) {
 			console.error('No active note to attach image to');
 			return;
@@ -158,7 +199,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 		try {
 			// Get path from file object (Electron specific)
 			let filePath = '';
-			
+
 			// Try to get path using the exposed API (webUtils)
 			if (window.api && window.api.getFilePath) {
 				try {
@@ -166,8 +207,8 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 				} catch (e) {
 					console.warn("Failed to get path via webUtils:", e);
 				}
-			} 
-			
+			}
+
 			// Fallback: try direct property access (works if contextIsolation is loose or older electron)
 			if (!filePath && (file as any).path) {
 				filePath = (file as any).path;
@@ -175,32 +216,32 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 
 			if (filePath) {
 				const attachment = await AttachmentsApiService.saveAttachment(selectedNoteId, filePath);
-				
+
 				if (attachment && attachment.path) {
-                    // Try to use a purely local file URL if possible, otherwise use local-resource protocol.
-                    // But wait, browsers inside Electron CAN use file:// protocol if webSecurity=false or configured.
-                    // We have webSecurity=true, so we MUST use custom protocol.
-                    
-                    // Let's modify the frontend to send a cleaner path.
-                    // We will remove the drive letter colon here and re-add it in backend? No, that's brittle.
-                    
-                    // Actually, the issue might be `encodeURI` vs `encodeURIComponent`.
-                    // If we use `local-resource://` + `C:/foo`, the browser might interpret `C:` as port or user info?
-                    
-                    // Let's use `local-resource:///` (3 slashes) + path.
-                    // Normalize backslashes.
-                    const normalizedPath = attachment.path.replace(/\\/g, '/');
-                    
-                    // Ensure it starts with a slash if it doesn't already (absolute path structure)
-                    // e.g. /C:/Users...
-                    const pathWithSlash = normalizedPath.startsWith('/') ? normalizedPath : '/' + normalizedPath;
-                    
-                    // Encode spaces and special chars, but NOT slashes or colon.
-                    // encodeURI does this, but it also leaves ? and # alone. 
-                    // To be safe for file paths, we might need manual component encoding if we have weird chars.
-                    // But for now encodeURI is usually fine for simple paths.
-                    const encodedPath = encodeURI(pathWithSlash);
-                    
+					// Try to use a purely local file URL if possible, otherwise use local-resource protocol.
+					// But wait, browsers inside Electron CAN use file:// protocol if webSecurity=false or configured.
+					// We have webSecurity=true, so we MUST use custom protocol.
+
+					// Let's modify the frontend to send a cleaner path.
+					// We will remove the drive letter colon here and re-add it in backend? No, that's brittle.
+
+					// Actually, the issue might be `encodeURI` vs `encodeURIComponent`.
+					// If we use `local-resource://` + `C:/foo`, the browser might interpret `C:` as port or user info?
+
+					// Let's use `local-resource:///` (3 slashes) + path.
+					// Normalize backslashes.
+					const normalizedPath = attachment.path.replace(/\\/g, '/');
+
+					// Ensure it starts with a slash if it doesn't already (absolute path structure)
+					// e.g. /C:/Users...
+					const pathWithSlash = normalizedPath.startsWith('/') ? normalizedPath : '/' + normalizedPath;
+
+					// Encode spaces and special chars, but NOT slashes or colon.
+					// encodeURI does this, but it also leaves ? and # alone. 
+					// To be safe for file paths, we might need manual component encoding if we have weird chars.
+					// But for now encodeURI is usually fine for simple paths.
+					const encodedPath = encodeURI(pathWithSlash);
+
 					const imageUrl = `local-resource://${encodedPath}`;
 					editor?.chain().focus().setImage({ src: imageUrl }).run();
 				}
@@ -275,7 +316,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 				{showTextColorSelector && (
 					<div className="absolute bottom-full mb-2 left-0 flex flex-col bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-3 gap-2 z-50 animate-in fade-in slide-in-from-bottom-1 min-w-50">
 						<div className="grid grid-cols-4 gap-2">
-							<button 
+							<button
 								onClick={unsetTextColor}
 								className="w-6 h-6 rounded border border-[#3e3e3e] flex items-center justify-center hover:bg-[#3e3e3e] transition-colors"
 								title="Por defecto"
@@ -307,7 +348,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 				{showHighlightColorSelector && (
 					<div className="absolute bottom-full mb-2 left-0 flex flex-col bg-[#252526] border border-[#3e3e3e] rounded shadow-lg p-3 gap-2 z-50 animate-in fade-in slide-in-from-bottom-1 min-w-50">
 						<div className="grid grid-cols-4 gap-2">
-							<button 
+							<button
 								onClick={unsetHighlightColor}
 								className="w-6 h-6 rounded border border-[#3e3e3e] relative hover:bg-[#3e3e3e] transition-colors"
 								title="Sin resaltar"
@@ -342,17 +383,25 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 
 			<Button onClick={addImage} isActive={false} icon={ImageIcon} title="Imagen" />
 
+			<div className="w-px h-4 bg-[#2d2d2d] mx-1" />
+
+			<Button onClick={toggleTaskList} isActive={editor.isActive('taskList')} icon={ListTodo} title="Lista de Tareas" />
+			<Button onClick={setLink} isActive={editor.isActive('link')} icon={Link2} title="Enlace" />
+			<Button onClick={addTable} isActive={editor.isActive('table')} icon={TableIcon} title="Tabla" />
+			<Button onClick={addYoutube} isActive={false} icon={YoutubeIcon} title="YouTube" />
+
 			{/* Status Indicator */}
-			<div className="ml-auto px-2 text-xs text-gray-500 whitespace-nowrap min-w-fit">
-				{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}
+			<div className="ml-auto px-2 text-xs text-gray-500 whitespace-nowrap min-w-fit flex flex-col items-end">
+				<span className="text-[#858585]">{editor.storage.characterCount.words()} palabras</span>
+				<span>{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}</span>
 			</div>
-			
-			<input 
-				type="file" 
-				ref={fileInputRef} 
-				className="hidden" 
-				accept="image/*" 
-				onChange={handleFileChange} 
+
+			<input
+				type="file"
+				ref={fileInputRef}
+				className="hidden"
+				accept="image/*"
+				onChange={handleFileChange}
 			/>
 		</div>
 	);
