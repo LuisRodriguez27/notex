@@ -1,6 +1,15 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
+  // Utilities
+  getFilePath: (file) => {
+    if (webUtils && webUtils.getPathForFile) {
+        return webUtils.getPathForFile(file);
+    }
+    // Fallback for older electron versions or if webUtils is missing
+    return file.path;
+  },
+
   // Notebooks
   getAllNotebooks: () => ipcRenderer.invoke('notebooks:getAll'),
   getDeletedNotebooks: () => ipcRenderer.invoke('notebooks:getDeleted'),
@@ -18,5 +27,12 @@ contextBridge.exposeInMainWorld('api', {
   createNote: (noteData) => ipcRenderer.invoke('notes:create', noteData),
   updateNote: (id, noteData) => ipcRenderer.invoke('notes:update', id, noteData),
   deleteNote: (id) => ipcRenderer.invoke('notes:delete', id),
-  restoreNote: (id) => ipcRenderer.invoke('notes:restore', id)
+  restoreNote: (id) => ipcRenderer.invoke('notes:restore', id),
+
+  // Attachments
+  saveAttachment: (noteId, filePath) => ipcRenderer.invoke('attachments:save', noteId, filePath),
+  saveAttachmentFromBuffer: (noteId, buffer, fileName) => ipcRenderer.invoke('attachments:saveBuffer', noteId, buffer, fileName),
+  getAttachments: (noteId) => ipcRenderer.invoke('attachments:getAll', noteId),
+  deleteAttachment: (id) => ipcRenderer.invoke('attachments:delete', id)
 });
+

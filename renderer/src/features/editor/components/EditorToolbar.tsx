@@ -19,6 +19,8 @@ import {
 	Highlighter
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useAppContext } from '@/context/AppContext';
+import { AttachmentsApiService } from '@/api/AttachmentsApiService';
 
 interface EditorToolbarProps {
 	editor: Editor | null;
@@ -27,6 +29,7 @@ interface EditorToolbarProps {
 }
 
 export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps) => {
+	const { selectedNoteId } = useAppContext();
 	const [showHeadingSelector, setShowHeadingSelector] = useState(false);
 	const [showTextColorSelector, setShowTextColorSelector] = useState(false);
 	const [showHighlightColorSelector, setShowHighlightColorSelector] = useState(false);
@@ -34,6 +37,7 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 	const headingSelectorRef = useRef<HTMLDivElement>(null);
 	const textColorSelectorRef = useRef<HTMLDivElement>(null);
 	const highlightColorSelectorRef = useRef<HTMLDivElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (!editor) return;
@@ -137,9 +141,81 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 
 	// Placeholder for image upload interaction
 	const addImage = () => {
-		const url = window.prompt('URL de la imagen:');
-		if (url) {
-			editor.chain().focus().setImage({ src: url }).run();
+		fileInputRef.current?.click();
+	};
+
+	const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (!file) {
+			return;
+		}
+		
+		if (!selectedNoteId) {
+			console.error('No active note to attach image to');
+			return;
+		}
+
+		try {
+			// Get path from file object (Electron specific)
+			let filePath = '';
+			
+			// Try to get path using the exposed API (webUtils)
+			if (window.api && window.api.getFilePath) {
+				try {
+					filePath = window.api.getFilePath(file);
+				} catch (e) {
+					console.warn("Failed to get path via webUtils:", e);
+				}
+			} 
+			
+			// Fallback: try direct property access (works if contextIsolation is loose or older electron)
+			if (!filePath && (file as any).path) {
+				filePath = (file as any).path;
+			}
+
+			if (filePath) {
+				const attachment = await AttachmentsApiService.saveAttachment(selectedNoteId, filePath);
+				
+				if (attachment && attachment.path) {
+                    // Try to use a purely local file URL if possible, otherwise use local-resource protocol.
+                    // But wait, browsers inside Electron CAN use file:// protocol if webSecurity=false or configured.
+                    // We have webSecurity=true, so we MUST use custom protocol.
+                    
+                    // Let's modify the frontend to send a cleaner path.
+                    // We will remove the drive letter colon here and re-add it in backend? No, that's brittle.
+                    
+                    // Actually, the issue might be `encodeURI` vs `encodeURIComponent`.
+                    // If we use `local-resource://` + `C:/foo`, the browser might interpret `C:` as port or user info?
+                    
+                    // Let's use `local-resource:///` (3 slashes) + path.
+                    // Normalize backslashes.
+                    const normalizedPath = attachment.path.replace(/\\/g, '/');
+                    
+                    // Ensure it starts with a slash if it doesn't already (absolute path structure)
+                    // e.g. /C:/Users...
+                    const pathWithSlash = normalizedPath.startsWith('/') ? normalizedPath : '/' + normalizedPath;
+                    
+                    // Encode spaces and special chars, but NOT slashes or colon.
+                    // encodeURI does this, but it also leaves ? and # alone. 
+                    // To be safe for file paths, we might need manual component encoding if we have weird chars.
+                    // But for now encodeURI is usually fine for simple paths.
+                    const encodedPath = encodeURI(pathWithSlash);
+                    
+					const imageUrl = `local-resource://${encodedPath}`;
+					editor?.chain().focus().setImage({ src: imageUrl }).run();
+				}
+			} else {
+				console.error('Could not determine file path. Electron security might strictly block file path access.');
+				alert('Error: No se pudo obtener la ruta del archivo. Por favor verifica los permisos o intenta nuevamente.');
+			}
+		} catch (error) {
+			console.error('Error uploading image:', error);
+			alert('Error al subir la imagen. Revisa la consola para más detalles.');
+		} finally {
+			// Reset input
+			if (fileInputRef.current) {
+				fileInputRef.current.value = '';
+			}
 		}
 	};
 
@@ -270,6 +346,14 @@ export const EditorToolbar = ({ editor, isSaving, isDirty }: EditorToolbarProps)
 			<div className="ml-auto px-2 text-xs text-gray-500 whitespace-nowrap min-w-fit">
 				{isSaving ? "Guardando..." : isDirty ? "Cambios sin guardar" : "Guardado"}
 			</div>
+			
+			<input 
+				type="file" 
+				ref={fileInputRef} 
+				className="hidden" 
+				accept="image/*" 
+				onChange={handleFileChange} 
+			/>
 		</div>
 	);
 };

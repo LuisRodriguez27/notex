@@ -17,13 +17,11 @@ function getDatabasePath() {
 	// En modo desarrollo, guarda la base de datos en el directorio del proyecto
 	if (!app.isPackaged) {
 		const devPath = path.join(__dirname, '../db/data.db');
-		console.log('Database path (dev):', devPath);
 		return devPath;
 	}
 
 	// En producción, guarda la base de datos en AppData (userData)
 	const prodPath = path.join(app.getPath('userData'), 'data.db');
-	console.log('Database path (prod):', prodPath);
 	return prodPath;
 }
 
@@ -65,6 +63,7 @@ db.exec(`
 		type TEXT NOT NULL,
 		path TEXT NOT NULL,
 		createdAt TEXT NOT NULL,
+		isSynced INTEGER NOT NULL DEFAULT 0,
 		FOREIGN KEY (noteId) REFERENCES notes(id) ON DELETE CASCADE
 	);
 

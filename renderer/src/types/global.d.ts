@@ -1,8 +1,11 @@
-import type { Notebook, Note } from "@/shared/types";
+import type { Notebook, Note, Attachment } from "@/shared/types";
 
 declare global {
 	interface Window {
 		api: {
+			// Utilities
+			getFilePath: (file: File) => string;
+
 			// Notebooks
 			getAllNotebooks: () => Promise<Notebook[]>;
 			getDeletedNotebooks: () => Promise<Notebook[]>;
@@ -21,6 +24,12 @@ declare global {
 			updateNote: (id: string, noteData: Partial<Note>) => Promise<Note>;
 			deleteNote: (id: string) => Promise<{ success: boolean; id: string }>;
 			restoreNote: (id: string) => Promise<boolean>;
+
+			// Attachments
+			saveAttachment: (noteId: string, filePath: string) => Promise<Attachment>;
+			saveAttachmentFromBuffer: (noteId: string, buffer: ArrayBuffer, fileName: string) => Promise<Attachment>;
+			getAttachments: (noteId: string) => Promise<Attachment[]>;
+			deleteAttachment: (id: string) => Promise<boolean>;
 		};
 	}
 }

@@ -1,3 +1,12 @@
+export interface Attachment {
+  id: string;
+  noteId: string;
+  type: string;
+  path: string;
+  createdAt: string;
+  isSynced?: number;
+}
+
 export interface NoteContent {
   type?: string;
   content?: any[];

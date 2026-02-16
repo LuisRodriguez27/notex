@@ -17,7 +17,7 @@ interface SidebarTwoProps {
 }
 
 export const SidebarTwo = ({ isExpanded, onToggle }: SidebarTwoProps) => {
-	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks, searchQuery } = useAppContext();
+	const { selectedNotebookId, notebooks, selectedNoteId, setSelectedNoteId, refreshNotebooks } = useAppContext();
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
